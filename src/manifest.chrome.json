@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Session Switcher",
   "version": "1.0.0",
-  "description": "A Firefox extension for switching between sessions",
+  "description": "A Chrome extension for switching between sessions",
 
   "permissions": ["storage", "tabs", "cookies", "activeTab", "scripting"],
   "host_permissions": ["<all_urls>"],
