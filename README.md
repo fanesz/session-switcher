@@ -9,8 +9,8 @@
 > Coming soon to browser extension stores:
 
 - **Chrome Web Store** → _[Pending Submission](#)_
-- **Edge Add-ons** → _[Pending Submission](#)_
 - **Firefox Add-ons** → _[Pending Submission](#)_
+- **Edge Add-ons** → _[Not Tested Yet](#)_
 
 ---
 

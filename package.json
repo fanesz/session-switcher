@@ -17,8 +17,10 @@
   "keywords": ["extension", "session", "switcher"],
   "license": "MIT",
   "scripts": {
-    "build": "bun build/build.ts",
-    "dev": "bun run build && web-ext run --source-dir=dist",
+    "build:firefox": "bun build/build.ts firefox",
+    "build:chrome": "bun build/build.ts chrome",
+    "dev:firefox": "bun run build:firefox && web-ext run --source-dir=dist",
+    "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
     "clean": "bun build/clean-dist.ts"
   }
 }

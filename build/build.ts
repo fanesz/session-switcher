@@ -9,7 +9,13 @@ const assetsDir = path.join(rootDir, "src", "assets");
 const distDir = path.join(rootDir, "dist");
 const popupDist = path.join(distDir, "popup");
 
-console.log("Building Session Switcher Extension...");
+const target = Bun.argv[2];
+if (!["firefox", "chrome"].includes(target)) {
+  console.error("❌ Please specify a target: 'firefox' or 'chrome'");
+  process.exit(1);
+}
+
+console.log(`Building Session Switcher Extension for ${target}...`);
 
 // Clean previous build
 await $`rm -rf ${distDir}`;
@@ -22,11 +28,17 @@ await $`mkdir -p ${popupDist}`;
 console.log("Compiling TypeScript...");
 await $`bun ${path.join(rootDir, "esbuild.config.js")}`;
 
-// Copy static files
-console.log("Copying static files...");
-await $`cp ${path.join(rootDir, "src/manifest.json")} ${distDir}/`;
+// Copy correct manifest file
+console.log("Copying manifest...");
+const manifestSrc =
+  target === "firefox"
+    ? path.join(rootDir, "src/manifest.firefox.json")
+    : path.join(rootDir, "src/manifest.chrome.json");
 
-// Copy popup/*.html and *.css manually
+await $`cp ${manifestSrc} ${path.join(distDir, "manifest.json")}`;
+
+// Copy popup/*.html and *.css
+console.log("Copying popup files...");
 const popupFiles = await readdir(popupSrc);
 for (const file of popupFiles) {
   if (file.endsWith(".html") || file.endsWith(".css")) {
@@ -34,7 +46,7 @@ for (const file of popupFiles) {
   }
 }
 
-// Copy icons folder if it exists
+// Copy icons/assets folder if exists
 try {
   await $`cp -R ${assetsDir} ${distDir}/`;
 } catch {
