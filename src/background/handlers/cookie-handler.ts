@@ -1,22 +1,33 @@
 export class CookieHandler {
   async getCookiesForDomain(domain: string): Promise<chrome.cookies.Cookie[]> {
     try {
-      return await chrome.cookies.getAll({ domain });
+      const stores = await chrome.cookies.getAllCookieStores();
+
+      const allCookies: chrome.cookies.Cookie[] = [];
+
+      for (const store of stores) {
+        const cookies = await chrome.cookies.getAll({
+          domain: domain,
+          storeId: store.id
+        });
+        allCookies.push(...cookies)
+      }
+
+      return allCookies;
     } catch (error) {
       console.error('Error getting cookies for domain:', domain, error);
       return [];
     }
   }
 
+  // TODO: fix this, it didn't delete any cookies
   async clearCookiesForDomain(domain: string): Promise<void> {
     const cookies = await this.getCookiesForDomain(domain);
-
+  
     const clearPromises = cookies.map(async (cookie) => {
       try {
-        const url = this.buildCookieUrl(cookie);
-        await chrome.cookies.remove({ url, name: cookie.name });
+        await chrome.cookies.remove({ url: "https://" + cookie.domain + cookie.path, name: cookie.name });
       } catch (error) {
-        
         console.warn('Failed to remove cookie:', cookie.name, error);
       }
     });
