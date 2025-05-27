@@ -47,14 +47,30 @@
 
 ---
 
+## Todo
+
+#### Core
+- Modify browser cookies (currently it only modify localStorage and sessionStorage)
+- List blocked web to avoid missclick
+
+#### UX
+- Draggable stored session to freely move up/down
+- Shortcut to switch to next/previous stored session
+- Folder feature for stored session
+
+---
+
 ## 🛠️ Build Instructions
 
 ```bash
 # Install dependencies (requires Bun)
 bun install
 
+# Dev the project
+bun run dev:<firefox or chrome>
+
 # Build the project
-bun run build
+bun run build:<firefox or chrome>
 ```
 
 ---
