@@ -6,7 +6,16 @@ export function extractDomain(hostname: string): string {
 export function getDomainFromUrl(url: string): string {
   try {
     const urlObj = new URL(url);
-    return extractDomain(urlObj.hostname);
+    const domain = extractDomain(urlObj.hostname);
+    
+    const isLocalhost = domain === 'localhost' || domain.startsWith('127.');
+    const port = urlObj.port;
+    
+    if (isLocalhost && port) {
+      return `${domain}:${port}`;
+    }
+    
+    return domain;
   } catch (error) {
     console.error('Invalid URL:', url);
     return '';
