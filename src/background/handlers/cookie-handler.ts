@@ -68,12 +68,10 @@ export class CookieHandler {
       httpOnly: cookie.httpOnly
     };
 
-    // Add expiration for persistent cookies
     if (!cookie.session && cookie.expirationDate) {
       cookieDetails.expirationDate = cookie.expirationDate;
     }
 
-    // Add SameSite if available
     if (cookie.sameSite) {
       cookieDetails.sameSite = cookie.sameSite;
     }

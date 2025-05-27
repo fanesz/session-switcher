@@ -26,10 +26,8 @@ export class SessionHandler {
 
   async switchToSession(sessionData: SessionData, tabId: number): Promise<void> {
     try {
-      // Clear existing session
       await this.cookieHandler.clearCookiesForDomain(sessionData.domain);
 
-      // Restore session data
       await Promise.all([
         this.cookieHandler.restoreCookies(sessionData.cookies),
         this.storageHandler.restoreStorageData(tabId, {
@@ -38,7 +36,6 @@ export class SessionHandler {
         })
       ]);
 
-      // Reload the tab to apply changes
       await chrome.tabs.reload(tabId);
     } catch (error) {
       throw new ExtensionError(`Failed to switch session: ${error}`);
@@ -52,7 +49,6 @@ export class SessionHandler {
         this.storageHandler.clearStorageData(tabId)
       ]);
 
-      // Reload the tab to apply changes
       await chrome.tabs.reload(tabId);
     } catch (error) {
       throw new ExtensionError(`Failed to clear session: ${error}`);
