@@ -8,8 +8,8 @@
 
 > Coming soon to browser extension stores:
 
-- **Chrome Web Store** → _[Pending Submission](#)_
-- **Firefox Add-ons** → _[Pending Submission](#)_
+- **Chrome Web Store** → [Session Switcher](https://chromewebstore.google.com/detail/session-switcher/mgekglkbhkpphbnhkmlhlnehaplibleh)
+- **Firefox Add-ons** → [Session Switcher](https://addons.mozilla.org/en-US/firefox/addon/session-switcher)
 - **Edge Add-ons** → _[Not Tested Yet](#)_
 
 ---
