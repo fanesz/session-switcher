@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storage Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        margin: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .display {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        font-size: 16px;
+        min-height: 20px;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+      .storage-type {
+        font-weight: bold;
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Storage Demo</h1>
+      <button onclick="setStorage('left')">Set Left</button>
+      <button onclick="setStorage('right')">Set Right</button>
+
+      <div id="localDisplay" class="display">
+        <span class="storage-type">localStorage:</span> No value stored yet
+      </div>
+
+      <div id="sessionDisplay" class="display">
+        <span class="storage-type">sessionStorage:</span> No value stored yet
+      </div>
+
+      <div id="cookieDisplay" class="display">
+        <span class="storage-type">Cookies:</span> No value stored yet
+      </div>
+    </div>
+
+    <script>
+      function setStorage(direction) {
+        // Store in localStorage
+        localStorage.setItem("direction", direction);
+
+        // Store in sessionStorage
+        sessionStorage.setItem("direction", direction);
+
+        // Store in cookies
+        document.cookie = `direction=${direction}; path=/; expires=${new Date(
+          Date.now() + 86400000
+        ).toUTCString()}; secure=false;`;
+
+        updateDisplay();
+      }
+
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) === 0)
+            return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      function updateDisplay() {
+        // Update localStorage display
+        const localValue = localStorage.getItem("direction");
+        document.getElementById(
+          "localDisplay"
+        ).innerHTML = `<span class="storage-type">localStorage:</span> ${
+          localValue || "No value stored yet"
+        }`;
+
+        // Update sessionStorage display
+        const sessionValue = sessionStorage.getItem("direction");
+        document.getElementById(
+          "sessionDisplay"
+        ).innerHTML = `<span class="storage-type">sessionStorage:</span> ${
+          sessionValue || "No value stored yet"
+        }`;
+
+        // Update cookies display
+        const cookieValue = getCookie("direction");
+        document.getElementById(
+          "cookieDisplay"
+        ).innerHTML = `<span class="storage-type">Cookies:</span> ${
+          cookieValue || "No value stored yet"
+        }`;
+      }
+
+      // Initialize display on page load
+      updateDisplay();
+    </script>
+  </body>
+</html>

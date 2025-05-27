@@ -76,7 +76,6 @@ export class PopupService {
         throw new ExtensionError('Session not found');
       }
 
-      // Send switch message to background
       const response = await this.chromeApi.sendMessage({
         action: MESSAGE_ACTIONS.SWITCH_SESSION,
         sessionData: session,
