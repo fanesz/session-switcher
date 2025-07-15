@@ -40,7 +40,7 @@ export class MessageService {
   private validateRequiredPermissions(permissions: chrome.permissions.Permissions): void {
     for (const permission of REQUIRED_PERMISSIONS) {
       if (!permissions.permissions?.includes(permission)) {
-        throw new Error(`Required permission '${permission}' not granted`);
+        throw new Error('Data access permission is required.');
       }
     }
   }
@@ -49,7 +49,7 @@ export class MessageService {
     const origins = permissions.origins || [];
 
     if (origins.length === 0) {
-      throw new Error('Require data access permission.');
+      throw new Error('Data access permission is required.');
     }
 
     const hasBroadAccess = origins.some(origin =>
@@ -59,7 +59,9 @@ export class MessageService {
       origin === 'https://*/*'
     );
 
-    if (hasBroadAccess) return;
+    if (!hasBroadAccess) {
+      throw new Error('Data access permission is required.');
+    }
   }
 
   private async processMessage(message: MessageType, sendResponse: (response: MessageResponse) => void): Promise<void> {
