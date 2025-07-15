@@ -2,6 +2,7 @@ import { MessageType, MessageResponse } from '../../shared/types';
 import { MESSAGE_ACTIONS } from '../../shared/constants/messages';
 import { handleError } from '../../shared/utils/error-handling';
 import { SessionHandler } from '../handlers/session-handler';
+import { REQUIRED_PERMISSIONS } from '../utils/requiredPermission';
 
 export class MessageService {
   private sessionHandler = new SessionHandler();
@@ -11,12 +12,56 @@ export class MessageService {
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: MessageResponse) => void
   ): boolean {
-    this.processMessage(message, sendResponse).catch((error) => {
-      const errorMessage = handleError(error, 'MessageService.handleMessage');
-      sendResponse({ success: false, error: errorMessage });
-    });
+    this.checkPermissions()
+      .then(() => {
+        return this.processMessage(message, sendResponse);
+      })
+      .catch((error) => {
+        const errorMessage = handleError(error, 'MessageService.handleMessage');
+        sendResponse({ success: false, error: errorMessage });
+      });
 
     return true;
+  }
+
+  private async checkPermissions(): Promise<void> {
+    try {
+      const permissions = await chrome.permissions.getAll();
+
+      this.validateRequiredPermissions(permissions);
+      this.validateOriginPermissions(permissions);
+
+    } catch (error) {
+      console.error('Permission check failed:', error);
+      throw error;
+    }
+  }
+
+  private validateRequiredPermissions(permissions: chrome.permissions.Permissions): void {
+    for (const permission of REQUIRED_PERMISSIONS) {
+      if (!permissions.permissions?.includes(permission)) {
+        throw new Error('Data access permission is required.');
+      }
+    }
+  }
+
+  private validateOriginPermissions(permissions: chrome.permissions.Permissions): void {
+    const origins = permissions.origins || [];
+
+    if (origins.length === 0) {
+      throw new Error('Data access permission is required.');
+    }
+
+    const hasBroadAccess = origins.some(origin =>
+      origin === '<all_urls>' ||
+      origin === '*://*/*' ||
+      origin === 'http://*/*' ||
+      origin === 'https://*/*'
+    );
+
+    if (!hasBroadAccess) {
+      throw new Error('Data access permission is required.');
+    }
   }
 
   private async processMessage(message: MessageType, sendResponse: (response: MessageResponse) => void): Promise<void> {
