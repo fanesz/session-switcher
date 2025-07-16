@@ -10,12 +10,12 @@ export class CookieHandler {
           domain: domain,
           storeId: store.id
         });
-        allCookies.push(...cookies)
+        allCookies.push(...cookies);
       }
 
       return allCookies;
     } catch (error) {
-      console.error('Error getting cookies for domain:', domain, error);
+      console.error("Error getting cookies for domain:", domain, error);
       return [];
     }
   }
@@ -23,25 +23,26 @@ export class CookieHandler {
   // TODO: fix this, it didn't delete any cookies
   async clearCookiesForDomain(domain: string): Promise<void> {
     const cookies = await this.getCookiesForDomain(domain);
-  
+
     const clearPromises = cookies.map(async (cookie) => {
       try {
         await chrome.cookies.remove({ url: "https://" + cookie.domain + cookie.path, name: cookie.name });
       } catch (error) {
-        console.warn('Failed to remove cookie:', cookie.name, error);
+        console.warn("Failed to remove cookie:", cookie.name, error);
       }
     });
 
     await Promise.all(clearPromises);
   }
 
+  // TODO: fix Failed to restore cookie: direction Error: An unexpected error occurred
   async restoreCookies(cookies: chrome.cookies.Cookie[]): Promise<void> {
     const restorePromises = cookies.map(async (cookie) => {
       try {
         const cookieDetails = this.prepareCookieForRestore(cookie);
         await chrome.cookies.set(cookieDetails);
       } catch (error) {
-        console.warn('Failed to restore cookie:', cookie.name, error);
+        console.warn("Failed to restore cookie:", cookie.name, error);
       }
     });
 
@@ -49,13 +50,13 @@ export class CookieHandler {
   }
 
   private buildCookieUrl(cookie: chrome.cookies.Cookie): string {
-    const protocol = cookie.secure ? 'https' : 'http';
-    const domain = cookie.domain.startsWith('.') ? cookie.domain.slice(1) : cookie.domain;
+    const protocol = cookie.secure ? "https" : "http";
+    const domain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
     return `${protocol}://${domain}${cookie.path}`;
   }
 
   private prepareCookieForRestore(cookie: chrome.cookies.Cookie): chrome.cookies.SetDetails {
-    const cleanedDomain = cookie.domain.startsWith('.') ? cookie.domain.slice(1) : cookie.domain;
+    const cleanedDomain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
     const url = this.buildCookieUrl(cookie);
 
     const cookieDetails: chrome.cookies.SetDetails = {

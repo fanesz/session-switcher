@@ -5,27 +5,29 @@ export interface BaseMessage {
 }
 
 export interface GetCurrentSessionMessage extends BaseMessage {
-  action: 'getCurrentSession';
+  action: "getCurrentSession";
   domain: string;
   tabId: number;
 }
 
 export interface SwitchSessionMessage extends BaseMessage {
-  action: 'switchSession';
+  action: "switchSession";
   sessionData: SessionData;
   tabId: number;
 }
 
 export interface ClearSessionMessage extends BaseMessage {
-  action: 'clearSession';
+  action: "clearSession";
   domain: string;
   tabId: number;
 }
 
 export type MessageType = GetCurrentSessionMessage | SwitchSessionMessage | ClearSessionMessage;
 
-export interface MessageResponse<T = any> {
+export interface MessageResponse<T = undefined> {
   success: boolean;
   data?: T;
   error?: string;
 }
+
+export type SendResponseType<T = unknown> = (response: MessageResponse<T>) => void

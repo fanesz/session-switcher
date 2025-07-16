@@ -1,15 +1,15 @@
-import { MessageType, MessageResponse } from '../../shared/types';
+import { MessageResponse, MessageType } from "@shared/types";
 
 export class ChromeApiService {
   async getCurrentTab(): Promise<chrome.tabs.Tab> {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs.length === 0) {
-      throw new Error('No active tab found');
+      throw new Error("No active tab found");
     }
     return tabs[0];
   }
 
-  async sendMessage<T = any>(message: MessageType): Promise<MessageResponse<T>> {
+  async sendMessage<T>(message: MessageType): Promise<MessageResponse<T>> {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage(message, (response: MessageResponse<T>) => {
         if (chrome.runtime.lastError) {
@@ -28,7 +28,7 @@ export class ChromeApiService {
     return chrome.storage.local.get(keys) as Promise<T>;
   }
 
-  async setStorageData(data: Record<string, any>): Promise<void> {
+  async setStorageData(data: Record<string, unknown>): Promise<void> {
     return chrome.storage.local.set(data);
   }
 }
