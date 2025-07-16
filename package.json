@@ -31,5 +31,9 @@
     "dev:firefox": "bun run build:firefox && web-ext run --source-dir=dist",
     "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
     "clean": "bun build/clean-dist.ts"
+  },
+  "dependencies": {
+    "D": "^1.0.0",
+    "eslint-plugin-import": "^2.32.0"
   }
 }

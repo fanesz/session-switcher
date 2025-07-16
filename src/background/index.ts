@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from "../shared/constants/storageKeys";
+import { STORAGE_KEYS } from "@shared/constants/storageKeys";
 import { MessageService } from "./services/message.service";
 
 const messageService = new MessageService();

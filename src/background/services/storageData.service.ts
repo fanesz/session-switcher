@@ -1,4 +1,4 @@
-import { StorageData } from "../../shared/types";
+import { StorageData } from "@shared/types";
 
 export function extractStorageData(): StorageData {
   try {
@@ -56,7 +56,6 @@ export function injectStorageData(localData: Record<string, string>, sessionData
     return false;
   }
 }
-
 
 export function clearStorage(): boolean {
   try {

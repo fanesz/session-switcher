@@ -35,6 +35,7 @@ export class CookieHandler {
     await Promise.all(clearPromises);
   }
 
+  // TODO: fix Failed to restore cookie: direction Error: An unexpected error occurred
   async restoreCookies(cookies: chrome.cookies.Cookie[]): Promise<void> {
     const restorePromises = cookies.map(async (cookie) => {
       try {

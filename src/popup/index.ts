@@ -1,9 +1,9 @@
-import { getElementByIdSafe } from "./utils/dom";
+import { handleError } from "@shared/utils/errorHandling";
 import { LoadingManager } from "./components/loadingManager";
 import { ModalManager } from "./components/modalManager";
 import { SessionList } from "./components/sessionList";
 import { PopupService } from "./services/popup.service";
-import { handleError } from "../shared/utils/errorHandling";
+import { getElementByIdSafe } from "./utils/dom";
 
 class PopupController {
   private loadingManager = new LoadingManager();

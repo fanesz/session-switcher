@@ -1,12 +1,36 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import"],
   "env": {
     "browser": true,
     "es2020": true,
     "webextensions": true
   },
   "rules": {
+  "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external", 
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "internal"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
     "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -28,6 +52,7 @@
     "no-unused-vars": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "no-undef": "off",
-    "no-trailing-spaces": "error"
+    "no-trailing-spaces": "error",
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }]
   }
 }

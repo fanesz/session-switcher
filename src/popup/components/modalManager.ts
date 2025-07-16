@@ -1,5 +1,5 @@
-import { getElementByIdSafe } from "../utils/dom";
-import { CSS_CLASSES } from "../utils/constants";
+import { CSS_CLASSES } from "@popup/utils/constants";
+import { getElementByIdSafe } from "@popup/utils/dom";
 
 export class ModalManager {
   private saveModal: HTMLElement;

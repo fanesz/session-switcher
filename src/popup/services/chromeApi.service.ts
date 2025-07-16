@@ -1,4 +1,4 @@
-import { MessageType, MessageResponse } from "../../shared/types";
+import { MessageResponse, MessageType } from "@shared/types";
 
 export class ChromeApiService {
   async getCurrentTab(): Promise<chrome.tabs.Tab> {

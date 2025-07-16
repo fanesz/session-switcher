@@ -1,8 +1,8 @@
-import { MessageType, SendResponseType, StoredSession } from "../../shared/types";
-import { MESSAGE_ACTIONS } from "../../shared/constants/messages";
-import { handleError } from "../../shared/utils/errorHandling";
-import { SessionHandler } from "../handlers/session.handler";
-import { REQUIRED_PERMISSIONS } from "../../shared/constants/requiredPermission";
+import { SessionHandler } from "@background/handlers/session.handler";
+import { MESSAGE_ACTIONS } from "@shared/constants/messages";
+import { REQUIRED_PERMISSIONS } from "@shared/constants/requiredPermission";
+import { MessageType, SendResponseType, StoredSession } from "@shared/types";
+import { handleError } from "@shared/utils/errorHandling";
 
 export class MessageService {
   private sessionHandler = new SessionHandler();

@@ -1,7 +1,7 @@
-import { SessionData, ActiveSessions } from "../../shared/types";
-import { escapeHtml } from "../utils/dom";
-import { formatDate } from "../../shared/utils/date";
-import { CSS_CLASSES, UI_TEXT } from "../utils/constants";
+import { CSS_CLASSES, UI_TEXT } from "@popup/utils/constants";
+import { escapeHtml } from "@popup/utils/dom";
+import { ActiveSessions, SessionData } from "@shared/types";
+import { formatDate } from "@shared/utils/date";
 
 export class SessionList {
   private container: HTMLElement;
