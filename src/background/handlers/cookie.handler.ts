@@ -71,9 +71,7 @@ export class CookieHandler {
     }
 
     const path = cookie.path || "/";
-    const url = `${protocol}://${domain}${path}`;
-    console.log("Built URL for cookie:", cookie.name, "->", url);
-    return url;
+    return `${protocol}://${domain}${path}`;
   }
 
   private prepareCookieForRestore(cookie: chrome.cookies.Cookie, fallbackDomain: string): chrome.cookies.SetDetails {
