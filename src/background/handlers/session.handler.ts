@@ -25,14 +25,16 @@ export class SessionHandler {
   }
 
   async switchToSession(sessionData: SessionData, tabId: number): Promise<void> {
+    const { domain, cookies, localStorage, sessionStorage } = sessionData;
+
     try {
-      await this.cookieHandler.clearCookiesForDomain(sessionData.domain);
+      await this.cookieHandler.clearCookiesForDomain(domain);
 
       await Promise.all([
-        this.cookieHandler.restoreCookies(sessionData.cookies!),
+        this.cookieHandler.restoreCookies(cookies, domain),
         this.storageHandler.restoreStorageData(tabId, {
-          localStorage: sessionData.localStorage!,
-          sessionStorage: sessionData.sessionStorage!
+          localStorage,
+          sessionStorage
         })
       ]);
 
