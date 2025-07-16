@@ -7,11 +7,7 @@ import { handleError } from "@shared/utils/errorHandling";
 export class MessageService {
   private sessionHandler = new SessionHandler();
 
-  handleMessage(
-    message: MessageType,
-    _: chrome.runtime.MessageSender,
-    sendResponse: SendResponseType
-  ): boolean {
+  handleMessage(message: MessageType, _: chrome.runtime.MessageSender, sendResponse: SendResponseType): boolean {
     this.checkPermissions()
       .then(() => {
         return this.processMessage(message, sendResponse);
@@ -30,7 +26,6 @@ export class MessageService {
 
       this.validateRequiredPermissions(permissions);
       this.validateOriginPermissions(permissions);
-
     } catch (error) {
       throw error;
     }
@@ -51,11 +46,8 @@ export class MessageService {
       throw new Error("Data access permission is required.");
     }
 
-    const hasBroadAccess = origins.some(origin =>
-      origin === "<all_urls>" ||
-      origin === "*://*/*" ||
-      origin === "http://*/*" ||
-      origin === "https://*/*"
+    const hasBroadAccess = origins.some(
+      (origin) => origin === "<all_urls>" || origin === "*://*/*" || origin === "http://*/*" || origin === "https://*/*"
     );
 
     if (!hasBroadAccess) {

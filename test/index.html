@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -58,17 +58,13 @@
       <button onclick="setStorage('left')">Set Left</button>
       <button onclick="setStorage('right')">Set Right</button>
 
-      <div id="localDisplay" class="display">
-        <span class="storage-type">localStorage:</span> No value stored yet
-      </div>
+      <div id="localDisplay" class="display"><span class="storage-type">localStorage:</span> No value stored yet</div>
 
       <div id="sessionDisplay" class="display">
         <span class="storage-type">sessionStorage:</span> No value stored yet
       </div>
 
-      <div id="cookieDisplay" class="display">
-        <span class="storage-type">Cookies:</span> No value stored yet
-      </div>
+      <div id="cookieDisplay" class="display"><span class="storage-type">Cookies:</span> No value stored yet</div>
     </div>
 
     <script>
@@ -93,8 +89,7 @@
         for (let i = 0; i < ca.length; i++) {
           let c = ca[i];
           while (c.charAt(0) === " ") c = c.substring(1, c.length);
-          if (c.indexOf(nameEQ) === 0)
-            return c.substring(nameEQ.length, c.length);
+          if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
         }
         return null;
       }
@@ -102,25 +97,19 @@
       function updateDisplay() {
         // Update localStorage display
         const localValue = localStorage.getItem("direction");
-        document.getElementById(
-          "localDisplay"
-        ).innerHTML = `<span class="storage-type">localStorage:</span> ${
+        document.getElementById("localDisplay").innerHTML = `<span class="storage-type">localStorage:</span> ${
           localValue || "No value stored yet"
         }`;
 
         // Update sessionStorage display
         const sessionValue = sessionStorage.getItem("direction");
-        document.getElementById(
-          "sessionDisplay"
-        ).innerHTML = `<span class="storage-type">sessionStorage:</span> ${
+        document.getElementById("sessionDisplay").innerHTML = `<span class="storage-type">sessionStorage:</span> ${
           sessionValue || "No value stored yet"
         }`;
 
         // Update cookies display
         const cookieValue = getCookie("direction");
-        document.getElementById(
-          "cookieDisplay"
-        ).innerHTML = `<span class="storage-type">Cookies:</span> ${
+        document.getElementById("cookieDisplay").innerHTML = `<span class="storage-type">Cookies:</span> ${
           cookieValue || "No value stored yet"
         }`;
       }

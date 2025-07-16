@@ -25,7 +25,7 @@ export class SessionList {
   }
 
   render(sessions: SessionData[], activeSessions: ActiveSessions, currentDomain: string): void {
-    const domainSessions = sessions.filter(s => s.domain === currentDomain);
+    const domainSessions = sessions.filter((s) => s.domain === currentDomain);
     const activeSessionId = activeSessions[currentDomain];
 
     if (domainSessions.length === 0) {
@@ -41,11 +41,12 @@ export class SessionList {
   }
 
   private renderSessions(sessions: SessionData[], activeSessionId?: string): void {
-    const sessionsHtml = sessions.map(session => {
-      const isActive = session.id === activeSessionId;
-      const lastUsed = formatDate(session.lastUsed);
+    const sessionsHtml = sessions
+      .map((session) => {
+        const isActive = session.id === activeSessionId;
+        const lastUsed = formatDate(session.lastUsed);
 
-      return `
+        return `
         <div class="${CSS_CLASSES.SESSION_ITEM} ${isActive ? CSS_CLASSES.ACTIVE : ""}" data-session-id="${session.id}">
           <div class="session-info">
             <div class="session-name">${escapeHtml(session.name)}</div>
@@ -61,7 +62,8 @@ export class SessionList {
           </div>
         </div>
       `;
-    }).join("");
+      })
+      .join("");
 
     this.container.innerHTML = sessionsHtml;
   }

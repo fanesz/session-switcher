@@ -30,4 +30,4 @@ export interface MessageResponse<T = undefined> {
   error?: string;
 }
 
-export type SendResponseType<T = unknown> = (response: MessageResponse<T>) => void
+export type SendResponseType<T = unknown> = (response: MessageResponse<T>) => void;

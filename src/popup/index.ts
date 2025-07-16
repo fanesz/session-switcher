@@ -54,7 +54,7 @@ class PopupController {
     this.sessionList.setEventHandlers({
       onSessionClick: (sessionId) => this.handleSessionSwitch(sessionId),
       onRenameClick: (sessionId) => this.handleRenameClick(sessionId),
-      onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId)
+      onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId),
     });
   }
 

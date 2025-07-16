@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {
     chrome.storage.local.set({
       [STORAGE_KEYS.SESSIONS]: [],
-      [STORAGE_KEYS.ACTIVE_SESSIONS]: {}
+      [STORAGE_KEYS.ACTIVE_SESSIONS]: {},
     });
   }
 });

@@ -29,7 +29,7 @@ export function extractStorageData(): StorageData {
 
     return {
       localStorage: localStorageData,
-      sessionStorage: sessionStorageData
+      sessionStorage: sessionStorageData,
     };
   } catch (error) {
     console.error("Error extracting storage data:", error);

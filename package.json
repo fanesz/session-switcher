@@ -13,6 +13,8 @@
     "esbuild": "^0.25.4",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-multiline-arrays": "^4.0.3",
     "ts-loader": "^9.5.0",
     "typescript": "^5.8.3",
     "web-ext": "^8.7.0",
@@ -20,12 +22,18 @@
     "webpack-cli": "^5.1.0"
   },
   "description": "Browser extension for switching sessions",
-  "keywords": ["extension", "session", "switcher"],
+  "keywords": [
+    "extension",
+    "session",
+    "switcher"
+  ],
   "license": "MIT",
   "scripts": {
     "lint": "eslint src --ext .ts,.js --fix",
     "lint:check": "eslint src --ext .ts,.js",
     "lint:fix": "eslint src --ext .ts,.js --fix",
+    "format": "bunx prettier . --write",
+    "format:check": "bunx prettier . --check",
     "build:firefox": "bun build/build.ts firefox",
     "build:chrome": "bun build/build.ts chrome",
     "dev:firefox": "bun run build:firefox && web-ext run --source-dir=dist",
