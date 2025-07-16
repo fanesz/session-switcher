@@ -16,7 +16,7 @@ export class PopupService {
     sessions: [],
     activeSessions: {},
     currentRenameSessionId: "",
-    currentDeleteSessionId: ""
+    currentDeleteSessionId: "",
   };
 
   async initialize(): Promise<PopupState> {
@@ -42,7 +42,7 @@ export class PopupService {
       const response = await this.chromeApi.sendMessage<StoredSession | null>({
         action: MESSAGE_ACTIONS.GET_CURRENT_SESSION,
         domain: this.state.currentDomain,
-        tabId: this.state.currentTab.id!
+        tabId: this.state.currentTab.id!,
       });
 
       if (!response.success) {
@@ -72,7 +72,7 @@ export class PopupService {
 
   async switchToSession(sessionId: string): Promise<void> {
     try {
-      const session = this.state.sessions.find(s => s.id === sessionId);
+      const session = this.state.sessions.find((s) => s.id === sessionId);
       if (!session) {
         throw new ExtensionError("Session not found");
       }
@@ -80,7 +80,7 @@ export class PopupService {
       const response = await this.chromeApi.sendMessage({
         action: MESSAGE_ACTIONS.SWITCH_SESSION,
         sessionData: session,
-        tabId: this.state.currentTab.id!
+        tabId: this.state.currentTab.id!,
       });
 
       if (!response.success) {
@@ -101,7 +101,7 @@ export class PopupService {
       const response = await this.chromeApi.sendMessage({
         action: MESSAGE_ACTIONS.CLEAR_SESSION,
         domain: this.state.currentDomain,
-        tabId: this.state.currentTab.id!
+        tabId: this.state.currentTab.id!,
       });
 
       if (!response.success) {
@@ -117,7 +117,7 @@ export class PopupService {
 
   async renameSession(sessionId: string, newName: string): Promise<void> {
     try {
-      const session = this.state.sessions.find(s => s.id === sessionId);
+      const session = this.state.sessions.find((s) => s.id === sessionId);
       if (!session) {
         throw new ExtensionError("Session not found");
       }
@@ -131,7 +131,7 @@ export class PopupService {
 
   async deleteSession(sessionId: string): Promise<void> {
     try {
-      this.state.sessions = this.state.sessions.filter(s => s.id !== sessionId);
+      this.state.sessions = this.state.sessions.filter((s) => s.id !== sessionId);
 
       if (this.state.activeSessions[this.state.currentDomain] === sessionId) {
         delete this.state.activeSessions[this.state.currentDomain];
@@ -144,7 +144,7 @@ export class PopupService {
   }
 
   getSession(sessionId: string): SessionData | undefined {
-    return this.state.sessions.find(s => s.id === sessionId);
+    return this.state.sessions.find((s) => s.id === sessionId);
   }
 
   getState(): PopupState {
@@ -159,7 +159,7 @@ export class PopupService {
     try {
       const result = await this.chromeApi.getStorageData<ExtensionStorage>([
         STORAGE_KEYS.SESSIONS,
-        STORAGE_KEYS.ACTIVE_SESSIONS
+        STORAGE_KEYS.ACTIVE_SESSIONS,
       ]);
 
       this.state.sessions = result[STORAGE_KEYS.SESSIONS] || [];
@@ -174,7 +174,7 @@ export class PopupService {
   private async saveStorageData(): Promise<void> {
     await this.chromeApi.setStorageData({
       [STORAGE_KEYS.SESSIONS]: this.state.sessions,
-      [STORAGE_KEYS.ACTIVE_SESSIONS]: this.state.activeSessions
+      [STORAGE_KEYS.ACTIVE_SESSIONS]: this.state.activeSessions,
     });
   }
 }

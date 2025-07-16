@@ -7,9 +7,13 @@ export class CookieHandler {
 
       for (const store of stores) {
         const cookies = await chrome.cookies.getAll({ storeId: store.id });
-        const domainCookies = cookies.filter(cookie => {
+        const domainCookies = cookies.filter((cookie) => {
           const slicedCookieDomain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
-          return slicedCookieDomain === currentDomain || slicedCookieDomain === `www.${currentDomain}` || currentDomain.endsWith(slicedCookieDomain);
+          return (
+            slicedCookieDomain === currentDomain ||
+            slicedCookieDomain === `www.${currentDomain}` ||
+            currentDomain.endsWith(slicedCookieDomain)
+          );
         });
         allCookies.push(...domainCookies);
       }
@@ -29,9 +33,8 @@ export class CookieHandler {
         await chrome.cookies.remove({
           url: this.buildCookieUrl(cookie, domain),
           name: cookie.name,
-          storeId: cookie.storeId
+          storeId: cookie.storeId,
         });
-
       } catch (error) {
         console.warn("Failed to remove cookie:", cookie.name, error);
       }
@@ -84,7 +87,7 @@ export class CookieHandler {
       path: cookie.path,
       secure: cookie.secure,
       httpOnly: cookie.httpOnly,
-      storeId: cookie.storeId
+      storeId: cookie.storeId,
     };
 
     if (cookie.domain && cookie.domain.startsWith(".")) {

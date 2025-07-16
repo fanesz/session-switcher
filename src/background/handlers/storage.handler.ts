@@ -7,7 +7,7 @@ export class StorageHandler {
     try {
       const results = await chrome.scripting.executeScript({
         target: { tabId },
-        func: extractStorageData
+        func: extractStorageData,
       });
 
       return results?.[0]?.result || { localStorage: {}, sessionStorage: {} };
@@ -22,7 +22,7 @@ export class StorageHandler {
       await chrome.scripting.executeScript({
         target: { tabId },
         func: injectStorageData,
-        args: [data.localStorage, data.sessionStorage]
+        args: [data.localStorage, data.sessionStorage],
       });
     } catch (error) {
       throw new ExtensionError(`Failed to restore storage data: ${error}`);
@@ -33,7 +33,7 @@ export class StorageHandler {
     try {
       await chrome.scripting.executeScript({
         target: { tabId },
-        func: clearStorage
+        func: clearStorage,
       });
     } catch (error) {
       throw new ExtensionError(`Failed to clear storage data: ${error}`);

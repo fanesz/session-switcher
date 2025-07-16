@@ -50,10 +50,12 @@
 ## Todo
 
 #### Core
+
 - Modify browser cookies (currently it only modify localStorage and sessionStorage)
 - List blocked web to avoid missclick
 
 #### UX
+
 - Draggable stored session to freely move up/down
 - Shortcut to switch to next/previous stored session
 - Folder feature for stored session

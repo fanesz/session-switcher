@@ -11,13 +11,13 @@ export class SessionHandler {
     try {
       const [cookies, storageData] = await Promise.all([
         this.cookieHandler.getCookiesForDomain(domain),
-        this.storageHandler.getStorageData(tabId)
+        this.storageHandler.getStorageData(tabId),
       ]);
 
       return {
         cookies,
         localStorage: storageData.localStorage,
-        sessionStorage: storageData.sessionStorage
+        sessionStorage: storageData.sessionStorage,
       };
     } catch (error) {
       throw new ExtensionError(`Failed to get current session: ${error}`);
@@ -34,8 +34,8 @@ export class SessionHandler {
         this.cookieHandler.restoreCookies(cookies, domain),
         this.storageHandler.restoreStorageData(tabId, {
           localStorage,
-          sessionStorage
-        })
+          sessionStorage,
+        }),
       ]);
 
       await chrome.tabs.reload(tabId);
@@ -48,7 +48,7 @@ export class SessionHandler {
     try {
       await Promise.all([
         this.cookieHandler.clearCookiesForDomain(domain),
-        this.storageHandler.clearStorageData(tabId)
+        this.storageHandler.clearStorageData(tabId),
       ]);
 
       await chrome.tabs.reload(tabId);

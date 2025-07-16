@@ -15,7 +15,7 @@ export class ChromeApiService {
         if (chrome.runtime.lastError) {
           resolve({
             success: false,
-            error: chrome.runtime.lastError.message
+            error: chrome.runtime.lastError.message,
           });
         } else {
           resolve(response);
