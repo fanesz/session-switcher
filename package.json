@@ -3,7 +3,6 @@
   "version": "1.1.0",
   "author": "Fanesz",
   "main": "dist/background.js",
-  "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/chrome": "^0.0.323",
@@ -13,6 +12,7 @@
     "@typescript-eslint/parser": "^8.37.0",
     "esbuild": "^0.25.4",
     "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.32.0",
     "ts-loader": "^9.5.0",
     "typescript": "^5.8.3",
     "web-ext": "^8.7.0",
@@ -32,8 +32,5 @@
     "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
     "clean": "bun build/clean-dist.ts"
   },
-  "dependencies": {
-    "D": "^1.0.0",
-    "eslint-plugin-import": "^2.32.0"
-  }
+  "type": "module"
 }
