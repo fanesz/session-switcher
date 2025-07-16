@@ -2,15 +2,16 @@ export class CookieHandler {
   async getCookiesForDomain(domain: string): Promise<chrome.cookies.Cookie[]> {
     try {
       const stores = await chrome.cookies.getAllCookieStores();
-
       const allCookies: chrome.cookies.Cookie[] = [];
+      const currentDomain = domain.split(":")[0];
 
       for (const store of stores) {
-        const cookies = await chrome.cookies.getAll({
-          domain: domain,
-          storeId: store.id
+        const cookies = await chrome.cookies.getAll({ storeId: store.id });
+        const domainCookies = cookies.filter(cookie => {
+          const slicedCookieDomain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
+          return slicedCookieDomain === currentDomain || slicedCookieDomain === `www.${currentDomain}` || currentDomain.endsWith(slicedCookieDomain);
         });
-        allCookies.push(...cookies);
+        allCookies.push(...domainCookies);
       }
 
       return allCookies;
@@ -20,13 +21,17 @@ export class CookieHandler {
     }
   }
 
-  // TODO: fix this, it didn't delete any cookies
   async clearCookiesForDomain(domain: string): Promise<void> {
     const cookies = await this.getCookiesForDomain(domain);
 
     const clearPromises = cookies.map(async (cookie) => {
       try {
-        await chrome.cookies.remove({ url: "https://" + cookie.domain + cookie.path, name: cookie.name });
+        await chrome.cookies.remove({
+          url: this.buildCookieUrl(cookie, domain),
+          name: cookie.name,
+          storeId: cookie.storeId
+        });
+
       } catch (error) {
         console.warn("Failed to remove cookie:", cookie.name, error);
       }
@@ -35,11 +40,11 @@ export class CookieHandler {
     await Promise.all(clearPromises);
   }
 
-  // TODO: fix Failed to restore cookie: direction Error: An unexpected error occurred
-  async restoreCookies(cookies: chrome.cookies.Cookie[]): Promise<void> {
+  async restoreCookies(cookies: chrome.cookies.Cookie[], domain: string): Promise<void> {
     const restorePromises = cookies.map(async (cookie) => {
       try {
-        const cookieDetails = this.prepareCookieForRestore(cookie);
+        const cookieDetails = this.prepareCookieForRestore(cookie, domain);
+
         await chrome.cookies.set(cookieDetails);
       } catch (error) {
         console.warn("Failed to restore cookie:", cookie.name, error);
@@ -49,31 +54,50 @@ export class CookieHandler {
     await Promise.all(restorePromises);
   }
 
-  private buildCookieUrl(cookie: chrome.cookies.Cookie): string {
+  private buildCookieUrl(cookie: chrome.cookies.Cookie, fallbackDomain?: string): string {
     const protocol = cookie.secure ? "https" : "http";
-    const domain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
-    return `${protocol}://${domain}${cookie.path}`;
+    let domain = cookie.domain;
+
+    if (domain.startsWith(".")) {
+      domain = domain.slice(1);
+    }
+
+    if (!domain && fallbackDomain) {
+      domain = fallbackDomain;
+    }
+
+    if (!domain) {
+      throw new Error(`Invalid domain for cookie ${cookie.name}: ${cookie.domain}`);
+    }
+
+    const path = cookie.path || "/";
+    const url = `${protocol}://${domain}${path}`;
+    console.log("Built URL for cookie:", cookie.name, "->", url);
+    return url;
   }
 
-  private prepareCookieForRestore(cookie: chrome.cookies.Cookie): chrome.cookies.SetDetails {
-    const cleanedDomain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
-    const url = this.buildCookieUrl(cookie);
+  private prepareCookieForRestore(cookie: chrome.cookies.Cookie, fallbackDomain: string): chrome.cookies.SetDetails {
+    const url = this.buildCookieUrl(cookie, fallbackDomain);
 
     const cookieDetails: chrome.cookies.SetDetails = {
       url,
       name: cookie.name,
       value: cookie.value,
-      domain: cleanedDomain,
       path: cookie.path,
       secure: cookie.secure,
-      httpOnly: cookie.httpOnly
+      httpOnly: cookie.httpOnly,
+      storeId: cookie.storeId
     };
+
+    if (cookie.domain && cookie.domain.startsWith(".")) {
+      cookieDetails.domain = cookie.domain;
+    }
 
     if (!cookie.session && cookie.expirationDate) {
       cookieDetails.expirationDate = cookie.expirationDate;
     }
 
-    if (cookie.sameSite) {
+    if (cookie.sameSite && cookie.sameSite !== "unspecified") {
       cookieDetails.sameSite = cookie.sameSite;
     }
 
