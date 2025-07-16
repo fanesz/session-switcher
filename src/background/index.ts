@@ -1,5 +1,5 @@
-import { STORAGE_KEYS } from '../shared/constants/storage-keys';
-import { MessageService } from './services/message-service';
+import { STORAGE_KEYS } from '../shared/constants/storageKeys';
+import { MessageService } from './services/message.service';
 
 const messageService = new MessageService();
 

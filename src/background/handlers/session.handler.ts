@@ -1,7 +1,7 @@
 import { SessionData, StorageData } from '../../shared/types';
-import { ExtensionError } from '../../shared/utils/error-handling';
-import { CookieHandler } from './cookie-handler';
-import { StorageHandler } from './storage-handler';
+import { ExtensionError } from '../../shared/utils/errorHandling';
+import { CookieHandler } from './cookie.handler';
+import { StorageHandler } from './storage.handler';
 
 export class SessionHandler {
   private cookieHandler = new CookieHandler();

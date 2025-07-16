@@ -1,4 +1,4 @@
-import { getElementByIdSafe } from '../utils/dom-utils';
+import { getElementByIdSafe } from '../utils/dom';
 import { CSS_CLASSES } from '../utils/constants';
 
 export class ModalManager {

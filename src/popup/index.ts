@@ -1,9 +1,9 @@
-import { getElementByIdSafe } from './utils/dom-utils';
-import { LoadingManager } from './components/loading-manager';
-import { ModalManager } from './components/modal-manager';
-import { SessionList } from './components/session-list';
-import { PopupService } from './services/popup-service';
-import { handleError } from '../shared/utils/error-handling';
+import { getElementByIdSafe } from './utils/dom';
+import { LoadingManager } from './components/loadingManager';
+import { ModalManager } from './components/modalManager';
+import { SessionList } from './components/sessionList';
+import { PopupService } from './services/popup.service';
+import { handleError } from '../shared/utils/errorHandling';
 
 class PopupController {
   private loadingManager = new LoadingManager();

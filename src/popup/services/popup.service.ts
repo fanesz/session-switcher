@@ -1,11 +1,11 @@
 import { SessionData, PopupState, ExtensionStorage } from '../../shared/types';
 import { MESSAGE_ACTIONS } from '../../shared/constants/messages';
-import { STORAGE_KEYS } from '../../shared/constants/storage-keys';
-import { generateId } from '../../shared/utils/id-generator';
+import { STORAGE_KEYS } from '../../shared/constants/storageKeys';
+import { generateId } from '../../shared/utils/idGenerator';
 import { validateSessionName } from '../../shared/utils/validation';
-import { getDomainFromUrl } from '../../shared/utils/domain-utils';
-import { ExtensionError, handleError } from '../../shared/utils/error-handling';
-import { ChromeApiService } from './chrome-api.service';
+import { getDomainFromUrl } from '../../shared/utils/domain';
+import { ExtensionError, handleError } from '../../shared/utils/errorHandling';
+import { ChromeApiService } from './chromeApi.service';
 
 export class PopupService {
   private chromeApi = new ChromeApiService();

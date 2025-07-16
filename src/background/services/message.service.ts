@@ -1,8 +1,8 @@
 import { MessageType, MessageResponse } from '../../shared/types';
 import { MESSAGE_ACTIONS } from '../../shared/constants/messages';
-import { handleError } from '../../shared/utils/error-handling';
-import { SessionHandler } from '../handlers/session-handler';
-import { REQUIRED_PERMISSIONS } from '../utils/requiredPermission';
+import { handleError } from '../../shared/utils/errorHandling';
+import { SessionHandler } from '../handlers/session.handler';
+import { REQUIRED_PERMISSIONS } from '../../shared/constants/requiredPermission';
 
 export class MessageService {
   private sessionHandler = new SessionHandler();

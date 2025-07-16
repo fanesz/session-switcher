@@ -1,6 +1,6 @@
 import { SessionData, ActiveSessions } from '../../shared/types';
-import { escapeHtml } from '../utils/dom-utils';
-import { formatDate } from '../../shared/utils/date-utils';
+import { escapeHtml } from '../utils/dom';
+import { formatDate } from '../../shared/utils/date';
 import { CSS_CLASSES, UI_TEXT } from '../utils/constants';
 
 export class SessionList {
