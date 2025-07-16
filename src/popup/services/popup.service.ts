@@ -1,28 +1,29 @@
-import { SessionData, PopupState, ExtensionStorage } from '../../shared/types';
-import { MESSAGE_ACTIONS } from '../../shared/constants/messages';
-import { STORAGE_KEYS } from '../../shared/constants/storageKeys';
-import { generateId } from '../../shared/utils/idGenerator';
-import { validateSessionName } from '../../shared/utils/validation';
-import { getDomainFromUrl } from '../../shared/utils/domain';
-import { ExtensionError, handleError } from '../../shared/utils/errorHandling';
-import { ChromeApiService } from './chromeApi.service';
+import { SessionData, PopupState, ExtensionStorage, StoredSession } from "../../shared/types";
+import { MESSAGE_ACTIONS } from "../../shared/constants/messages";
+import { STORAGE_KEYS } from "../../shared/constants/storageKeys";
+import { generateId } from "../../shared/utils/idGenerator";
+import { validateSessionName } from "../../shared/utils/validation";
+import { getDomainFromUrl } from "../../shared/utils/domain";
+import { ExtensionError, handleError } from "../../shared/utils/errorHandling";
+import { ChromeApiService } from "./chromeApi.service";
+import { storedSessionDefaultValue } from "@popup/utils/defaultValue";
 
 export class PopupService {
   private chromeApi = new ChromeApiService();
   private state: PopupState = {
-    currentDomain: '',
+    currentDomain: "",
     currentTab: {} as chrome.tabs.Tab,
     sessions: [],
     activeSessions: {},
-    currentRenameSessionId: '',
-    currentDeleteSessionId: ''
+    currentRenameSessionId: "",
+    currentDeleteSessionId: ""
   };
 
   async initialize(): Promise<PopupState> {
     try {
       this.state.currentTab = await this.chromeApi.getCurrentTab();
       if (!this.state.currentTab.url) {
-        throw new ExtensionError('Unable to get current tab URL');
+        throw new ExtensionError("Unable to get current tab URL");
       }
 
       this.state.currentDomain = getDomainFromUrl(this.state.currentTab.url);
@@ -30,7 +31,7 @@ export class PopupService {
 
       return { ...this.state };
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.initialize'));
+      throw new ExtensionError(handleError(error, "PopupService.initialize"));
     }
   }
 
@@ -38,25 +39,25 @@ export class PopupService {
     try {
       const validatedName = validateSessionName(name);
 
-      const response = await this.chromeApi.sendMessage({
+      const response = await this.chromeApi.sendMessage<StoredSession | null>({
         action: MESSAGE_ACTIONS.GET_CURRENT_SESSION,
         domain: this.state.currentDomain,
         tabId: this.state.currentTab.id!
       });
 
       if (!response.success) {
-        throw new ExtensionError(response.error || 'Failed to get current session');
+        throw new ExtensionError(response.error || "Failed to get current session");
       }
 
-      const sessionData = response.data;
+      const storedSession = response.data ?? storedSessionDefaultValue;
 
       const newSession: SessionData = {
-        ...sessionData,
+        ...storedSession,
         id: generateId(),
         name: validatedName,
         domain: this.state.currentDomain,
         createdAt: Date.now(),
-        lastUsed: Date.now()
+        lastUsed: Date.now(),
       };
 
       this.state.sessions.push(newSession);
@@ -65,7 +66,7 @@ export class PopupService {
 
       return newSession;
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.saveCurrentSession'));
+      throw new ExtensionError(handleError(error, "PopupService.saveCurrentSession"));
     }
   }
 
@@ -73,7 +74,7 @@ export class PopupService {
     try {
       const session = this.state.sessions.find(s => s.id === sessionId);
       if (!session) {
-        throw new ExtensionError('Session not found');
+        throw new ExtensionError("Session not found");
       }
 
       const response = await this.chromeApi.sendMessage({
@@ -83,7 +84,7 @@ export class PopupService {
       });
 
       if (!response.success) {
-        throw new ExtensionError(response.error || 'Failed to switch session');
+        throw new ExtensionError(response.error || "Failed to switch session");
       }
 
       this.state.activeSessions[this.state.currentDomain] = sessionId;
@@ -91,7 +92,7 @@ export class PopupService {
 
       await this.saveStorageData();
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.switchToSession'));
+      throw new ExtensionError(handleError(error, "PopupService.switchToSession"));
     }
   }
 
@@ -104,13 +105,13 @@ export class PopupService {
       });
 
       if (!response.success) {
-        throw new ExtensionError(response.error || 'Failed to clear session');
+        throw new ExtensionError(response.error || "Failed to clear session");
       }
 
       delete this.state.activeSessions[this.state.currentDomain];
       await this.saveStorageData();
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.createNewSession'));
+      throw new ExtensionError(handleError(error, "PopupService.createNewSession"));
     }
   }
 
@@ -118,13 +119,13 @@ export class PopupService {
     try {
       const session = this.state.sessions.find(s => s.id === sessionId);
       if (!session) {
-        throw new ExtensionError('Session not found');
+        throw new ExtensionError("Session not found");
       }
 
       session.name = validateSessionName(newName);
       await this.saveStorageData();
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.renameSession'));
+      throw new ExtensionError(handleError(error, "PopupService.renameSession"));
     }
   }
 
@@ -138,7 +139,7 @@ export class PopupService {
 
       await this.saveStorageData();
     } catch (error) {
-      throw new ExtensionError(handleError(error, 'PopupService.deleteSession'));
+      throw new ExtensionError(handleError(error, "PopupService.deleteSession"));
     }
   }
 
@@ -164,7 +165,7 @@ export class PopupService {
       this.state.sessions = result[STORAGE_KEYS.SESSIONS] || [];
       this.state.activeSessions = result[STORAGE_KEYS.ACTIVE_SESSIONS] || {};
     } catch (error) {
-      console.error('Error loading storage data:', error);
+      console.error("Error loading storage data:", error);
       this.state.sessions = [];
       this.state.activeSessions = {};
     }

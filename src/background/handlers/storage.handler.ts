@@ -1,6 +1,6 @@
-import { StorageData } from '../../shared/types';
-import { ExtensionError } from '../../shared/utils/errorHandling';
-import { clearStorage, extractStorageData, injectStorageData } from '../services/storageData.service';
+import { StorageData } from "../../shared/types";
+import { ExtensionError } from "../../shared/utils/errorHandling";
+import { clearStorage, extractStorageData, injectStorageData } from "../services/storageData.service";
 
 export class StorageHandler {
   async getStorageData(tabId: number): Promise<StorageData> {
@@ -12,7 +12,7 @@ export class StorageHandler {
 
       return results?.[0]?.result || { localStorage: {}, sessionStorage: {} };
     } catch (error) {
-      console.error('Error getting storage data:', error);
+      console.error("Error getting storage data:", error);
       return { localStorage: {}, sessionStorage: {} };
     }
   }

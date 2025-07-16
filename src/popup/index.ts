@@ -1,9 +1,9 @@
-import { getElementByIdSafe } from './utils/dom';
-import { LoadingManager } from './components/loadingManager';
-import { ModalManager } from './components/modalManager';
-import { SessionList } from './components/sessionList';
-import { PopupService } from './services/popup.service';
-import { handleError } from '../shared/utils/errorHandling';
+import { getElementByIdSafe } from "./utils/dom";
+import { LoadingManager } from "./components/loadingManager";
+import { ModalManager } from "./components/modalManager";
+import { SessionList } from "./components/sessionList";
+import { PopupService } from "./services/popup.service";
+import { handleError } from "../shared/utils/errorHandling";
 
 class PopupController {
   private loadingManager = new LoadingManager();
@@ -17,12 +17,12 @@ class PopupController {
 
   constructor() {
     // Get DOM elements
-    this.currentSiteElement = getElementByIdSafe('currentSite');
-    this.saveBtn = getElementByIdSafe('saveBtn');
-    this.newSessionBtn = getElementByIdSafe('newSessionBtn');
+    this.currentSiteElement = getElementByIdSafe("currentSite");
+    this.saveBtn = getElementByIdSafe("saveBtn");
+    this.newSessionBtn = getElementByIdSafe("newSessionBtn");
 
     // Initialize session list
-    this.sessionList = new SessionList(getElementByIdSafe('sessionsList'));
+    this.sessionList = new SessionList(getElementByIdSafe("sessionsList"));
     this.setupSessionListHandlers();
     this.setupEventListeners();
   }
@@ -36,18 +36,18 @@ class PopupController {
       this.currentSiteElement.textContent = state.currentDomain;
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'PopupController.initialize'));
+      this.showError(handleError(error, "PopupController.initialize"));
     }
   }
 
   private setupEventListeners(): void {
-    this.saveBtn.addEventListener('click', () => this.handleSaveClick());
-    this.newSessionBtn.addEventListener('click', () => this.handleNewSessionClick());
+    this.saveBtn.addEventListener("click", () => this.handleSaveClick());
+    this.newSessionBtn.addEventListener("click", () => this.handleNewSessionClick());
 
     // Modal event listeners
-    getElementByIdSafe('confirmSave').addEventListener('click', () => this.handleConfirmSave());
-    getElementByIdSafe('confirmRename').addEventListener('click', () => this.handleConfirmRename());
-    getElementByIdSafe('confirmDelete').addEventListener('click', () => this.handleConfirmDelete());
+    getElementByIdSafe("confirmSave").addEventListener("click", () => this.handleConfirmSave());
+    getElementByIdSafe("confirmRename").addEventListener("click", () => this.handleConfirmRename());
+    getElementByIdSafe("confirmDelete").addEventListener("click", () => this.handleConfirmDelete());
   }
 
   private setupSessionListHandlers(): void {
@@ -65,7 +65,7 @@ class PopupController {
   private async handleConfirmSave(): Promise<void> {
     try {
       const name = this.modalManager.getSaveModalInput();
-      
+
       await this.loadingManager.withLoading(async () => {
         await this.popupService.saveCurrentSession(name);
       });
@@ -73,7 +73,7 @@ class PopupController {
       this.modalManager.hideSaveModal();
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'save session'));
+      this.showError(handleError(error, "save session"));
     }
   }
 
@@ -85,7 +85,7 @@ class PopupController {
 
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'create new session'));
+      this.showError(handleError(error, "create new session"));
     }
   }
 
@@ -97,7 +97,7 @@ class PopupController {
 
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'switch session'));
+      this.showError(handleError(error, "switch session"));
     }
   }
 
@@ -121,7 +121,7 @@ class PopupController {
 
       this.modalManager.hideRenameModal();
     } catch (error) {
-      this.showError(handleError(error, 'rename session'));
+      this.showError(handleError(error, "rename session"));
     }
   }
 
@@ -144,7 +144,7 @@ class PopupController {
 
       this.modalManager.hideDeleteModal();
     } catch (error) {
-      this.showError(handleError(error, 'delete session'));
+      this.showError(handleError(error, "delete session"));
     }
   }
 
@@ -154,15 +154,15 @@ class PopupController {
   }
 
   private showError(message: string): void {
-    console.error('Popup error:', message);
+    console.error("Popup error:", message);
     alert(`Error: ${message}`);
   }
 }
 
 // Initialize popup when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('Session Switcher popup loaded');
-  
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Session Switcher popup loaded");
+
   const popup = new PopupController();
   await popup.initialize();
 });

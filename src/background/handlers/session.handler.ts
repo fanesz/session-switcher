@@ -1,13 +1,13 @@
-import { SessionData, StorageData } from '../../shared/types';
-import { ExtensionError } from '../../shared/utils/errorHandling';
-import { CookieHandler } from './cookie.handler';
-import { StorageHandler } from './storage.handler';
+import { SessionData, StoredSession } from "../../shared/types";
+import { ExtensionError } from "../../shared/utils/errorHandling";
+import { CookieHandler } from "./cookie.handler";
+import { StorageHandler } from "./storage.handler";
 
 export class SessionHandler {
   private cookieHandler = new CookieHandler();
   private storageHandler = new StorageHandler();
 
-  async getCurrentSession(domain: string, tabId: number): Promise<Partial<SessionData>> {
+  async getCurrentSession(domain: string, tabId: number): Promise<StoredSession> {
     try {
       const [cookies, storageData] = await Promise.all([
         this.cookieHandler.getCookiesForDomain(domain),
@@ -29,10 +29,10 @@ export class SessionHandler {
       await this.cookieHandler.clearCookiesForDomain(sessionData.domain);
 
       await Promise.all([
-        this.cookieHandler.restoreCookies(sessionData.cookies),
+        this.cookieHandler.restoreCookies(sessionData.cookies!),
         this.storageHandler.restoreStorageData(tabId, {
-          localStorage: sessionData.localStorage,
-          sessionStorage: sessionData.sessionStorage
+          localStorage: sessionData.localStorage!,
+          sessionStorage: sessionData.sessionStorage!
         })
       ]);
 

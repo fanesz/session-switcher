@@ -11,7 +11,12 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
-    "types": ["chrome"]
+    "types": ["chrome"],
+    "paths": {
+      "@background/*": ["./src/background/*"],
+      "@popup/*": ["./src/popup/*"],
+      "@shared/*": ["./src/shared/*"],
+    }
   },
   "include": [
     "src/**/*"

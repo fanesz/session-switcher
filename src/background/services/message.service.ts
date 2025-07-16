@@ -1,23 +1,23 @@
-import { MessageType, MessageResponse } from '../../shared/types';
-import { MESSAGE_ACTIONS } from '../../shared/constants/messages';
-import { handleError } from '../../shared/utils/errorHandling';
-import { SessionHandler } from '../handlers/session.handler';
-import { REQUIRED_PERMISSIONS } from '../../shared/constants/requiredPermission';
+import { MessageType, SendResponseType, StoredSession } from "../../shared/types";
+import { MESSAGE_ACTIONS } from "../../shared/constants/messages";
+import { handleError } from "../../shared/utils/errorHandling";
+import { SessionHandler } from "../handlers/session.handler";
+import { REQUIRED_PERMISSIONS } from "../../shared/constants/requiredPermission";
 
 export class MessageService {
   private sessionHandler = new SessionHandler();
 
   handleMessage(
     message: MessageType,
-    sender: chrome.runtime.MessageSender,
-    sendResponse: (response: MessageResponse) => void
+    _: chrome.runtime.MessageSender,
+    sendResponse: SendResponseType
   ): boolean {
     this.checkPermissions()
       .then(() => {
         return this.processMessage(message, sendResponse);
       })
       .catch((error) => {
-        const errorMessage = handleError(error, 'MessageService.handleMessage');
+        const errorMessage = handleError(error, "MessageService.handleMessage");
         sendResponse({ success: false, error: errorMessage });
       });
 
@@ -32,7 +32,6 @@ export class MessageService {
       this.validateOriginPermissions(permissions);
 
     } catch (error) {
-      console.error('Permission check failed:', error);
       throw error;
     }
   }
@@ -40,7 +39,7 @@ export class MessageService {
   private validateRequiredPermissions(permissions: chrome.permissions.Permissions): void {
     for (const permission of REQUIRED_PERMISSIONS) {
       if (!permissions.permissions?.includes(permission)) {
-        throw new Error('Data access permission is required.');
+        throw new Error("Data access permission is required.");
       }
     }
   }
@@ -49,22 +48,22 @@ export class MessageService {
     const origins = permissions.origins || [];
 
     if (origins.length === 0) {
-      throw new Error('Data access permission is required.');
+      throw new Error("Data access permission is required.");
     }
 
     const hasBroadAccess = origins.some(origin =>
-      origin === '<all_urls>' ||
-      origin === '*://*/*' ||
-      origin === 'http://*/*' ||
-      origin === 'https://*/*'
+      origin === "<all_urls>" ||
+      origin === "*://*/*" ||
+      origin === "http://*/*" ||
+      origin === "https://*/*"
     );
 
     if (!hasBroadAccess) {
-      throw new Error('Data access permission is required.');
+      throw new Error("Data access permission is required.");
     }
   }
 
-  private async processMessage(message: MessageType, sendResponse: (response: MessageResponse) => void): Promise<void> {
+  private async processMessage(message: MessageType, sendResponse: SendResponseType): Promise<void> {
     switch (message.action) {
       case MESSAGE_ACTIONS.GET_CURRENT_SESSION:
         await this.handleGetCurrentSession(message, sendResponse);
@@ -79,29 +78,29 @@ export class MessageService {
         break;
 
       default:
-        sendResponse({ success: false, error: 'Unknown action' });
+        sendResponse({ success: false, error: "Unknown action" });
     }
   }
 
   private async handleGetCurrentSession(
-    message: Extract<MessageType, { action: 'getCurrentSession' }>,
-    sendResponse: (response: MessageResponse) => void
+    message: Extract<MessageType, { action: "getCurrentSession" }>,
+    sendResponse: SendResponseType<StoredSession | null>
   ): Promise<void> {
     const sessionData = await this.sessionHandler.getCurrentSession(message.domain, message.tabId);
     sendResponse({ success: true, data: sessionData });
   }
 
   private async handleSwitchSession(
-    message: Extract<MessageType, { action: 'switchSession' }>,
-    sendResponse: (response: MessageResponse) => void
+    message: Extract<MessageType, { action: "switchSession" }>,
+    sendResponse: SendResponseType
   ): Promise<void> {
     await this.sessionHandler.switchToSession(message.sessionData, message.tabId);
     sendResponse({ success: true });
   }
 
   private async handleClearSession(
-    message: Extract<MessageType, { action: 'clearSession' }>,
-    sendResponse: (response: MessageResponse) => void
+    message: Extract<MessageType, { action: "clearSession" }>,
+    sendResponse: SendResponseType
   ): Promise<void> {
     await this.sessionHandler.clearSession(message.domain, message.tabId);
     sendResponse({ success: true });

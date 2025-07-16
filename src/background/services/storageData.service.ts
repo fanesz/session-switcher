@@ -32,7 +32,7 @@ export function extractStorageData(): StorageData {
       sessionStorage: sessionStorageData
     };
   } catch (error) {
-    console.error('Error extracting storage data:', error);
+    console.error("Error extracting storage data:", error);
     return { localStorage: {}, sessionStorage: {} };
   }
 }
@@ -52,7 +52,7 @@ export function injectStorageData(localData: Record<string, string>, sessionData
 
     return true;
   } catch (error) {
-    console.error('Error injecting storage data:', error);
+    console.error("Error injecting storage data:", error);
     return false;
   }
 }
@@ -64,7 +64,7 @@ export function clearStorage(): boolean {
     sessionStorage.clear();
     return true;
   } catch (error) {
-    console.error('Error clearing storage:', error);
+    console.error("Error clearing storage:", error);
     return false;
   }
 }
