@@ -22,17 +22,86 @@ body {
   color: white;
   padding: 16px;
   text-align: center;
+  position: relative;
 }
 
 .title {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 8px 0;
+  position: relative;
+  display: inline-block;
 }
 
 .title .byline {
   font-size: 0.6em;
   color: rgba(223, 223, 223, 0.8);
+}
+
+.info-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  color: #667eea;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 16px;
+  text-align: center;
+  cursor: help;
+  margin-left: 8px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.info-tooltip {
+  position: absolute;
+  top: 100%;
+  right: -38px;
+  background: rgba(247, 247, 247, 0.95);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  width: 240px;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+  z-index: 1000;
+  margin-top: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.info-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 40px;
+  border: 6px solid transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.9);
+}
+
+.info-icon:hover .info-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.info-tooltip h4 {
+  color: #415bd1;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-tooltip p {
+  margin-bottom: 4px;
+}
+
+.info-tooltip p:last-child {
+  margin-bottom: 0;
 }
 
 .current-site {
