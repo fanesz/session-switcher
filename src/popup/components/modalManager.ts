@@ -1,109 +1,115 @@
 import { CSS_CLASSES } from "@popup/utils/constants";
 import { getElementByIdSafe } from "@popup/utils/dom";
+import { ModalList, ModalInputs } from "@shared/types/modal.types";
 
 export class ModalManager {
-  private saveModal: HTMLElement;
-  private renameModal: HTMLElement;
-  private deleteModal: HTMLElement;
-  private sessionNameInput: HTMLInputElement;
-  private newSessionNameInput: HTMLInputElement;
+  private modals: ModalList;
+  private inputs: ModalInputs;
 
   constructor() {
-    this.saveModal = getElementByIdSafe("saveModal");
-    this.renameModal = getElementByIdSafe("renameModal");
-    this.deleteModal = getElementByIdSafe("deleteModal");
-    this.sessionNameInput = getElementByIdSafe("sessionName");
-    this.newSessionNameInput = getElementByIdSafe("newSessionName");
+    this.modals = {
+      save: getElementByIdSafe("saveModal"),
+      rename: getElementByIdSafe("renameModal"),
+      delete: getElementByIdSafe("deleteModal"),
+      error: getElementByIdSafe("errorModal")
+    };
+
+    this.inputs = {
+      sessionName: getElementByIdSafe("sessionName"),
+      newSessionName: getElementByIdSafe("newSessionName")
+    };
 
     this.setupEventListeners();
   }
 
   private setupEventListeners(): void {
-    // Save modal events
-    getElementByIdSafe("closeSaveModal").addEventListener("click", () => this.hideSaveModal());
-    getElementByIdSafe("cancelSave").addEventListener("click", () => this.hideSaveModal());
+    const closeButtons = [
+      { id: "closeSaveModal", modal: "save" },
+      { id: "cancelSave", modal: "save" },
+      { id: "closeRenameModal", modal: "rename" },
+      { id: "cancelRename", modal: "rename" },
+      { id: "closeDeleteModal", modal: "delete" },
+      { id: "cancelDelete", modal: "delete" },
+      { id: "closeErrorModal", modal: "error" },
+      { id: "closeErrorModalBtn", modal: "error" }
+    ];
 
-    // Rename modal events
-    getElementByIdSafe("closeRenameModal").addEventListener("click", () => this.hideRenameModal());
-    getElementByIdSafe("cancelRename").addEventListener("click", () => this.hideRenameModal());
+    closeButtons.forEach(({ id, modal }) => {
+      getElementByIdSafe(id).addEventListener("click", () => this.hide(modal as keyof ModalList));
+    });
 
-    // Delete modal events
-    getElementByIdSafe("closeDeleteModal").addEventListener("click", () => this.hideDeleteModal());
-    getElementByIdSafe("cancelDelete").addEventListener("click", () => this.hideDeleteModal());
-
-    // Enter key handlers for input fields
-    this.sessionNameInput.addEventListener("keydown", (e) => {
+    // Enter key handlers
+    this.inputs.sessionName.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        const confirmSaveBtn = getElementByIdSafe("confirmSave");
-        confirmSaveBtn.click();
+        getElementByIdSafe("confirmSave").click();
       }
     });
 
-    this.newSessionNameInput.addEventListener("keydown", (e) => {
+    this.inputs.newSessionName.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        const confirmRenameBtn = getElementByIdSafe("confirmRename");
-        confirmRenameBtn.click();
+        getElementByIdSafe("confirmRename").click();
       }
     });
 
-    // Enter key handler for delete modal
-    this.deleteModal.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && this.deleteModal.classList.contains(CSS_CLASSES.SHOW)) {
-        e.preventDefault();
-        const confirmDeleteBtn = getElementByIdSafe("confirmDelete");
-        confirmDeleteBtn.click();
-      }
-    });
-
-    // Escape key handlers for all modals
+    // Global event handlers
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (this.saveModal.classList.contains(CSS_CLASSES.SHOW)) {
-          this.hideSaveModal();
-        } else if (this.renameModal.classList.contains(CSS_CLASSES.SHOW)) {
-          this.hideRenameModal();
-        } else if (this.deleteModal.classList.contains(CSS_CLASSES.SHOW)) {
-          this.hideDeleteModal();
+        this.hideVisible();
+      }
+      if (e.key === "Enter") {
+        if (this.isVisible("delete")) {
+          e.preventDefault();
+          getElementByIdSafe("confirmDelete").click();
+        }
+        if (this.isVisible("error")) {
+          e.preventDefault();
+          getElementByIdSafe("closeErrorModal").click();
         }
       }
     });
 
-    // Close on backdrop click
-    this.saveModal.addEventListener("click", (e) => {
-      if (e.target === this.saveModal) this.hideSaveModal();
+    // Backdrop click handlers
+    Object.entries(this.modals).forEach(([key, modal]) => {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) this.hide(key as keyof ModalList);
+      });
     });
+  }
 
-    this.renameModal.addEventListener("click", (e) => {
-      if (e.target === this.renameModal) this.hideRenameModal();
-    });
+  private isVisible(modalKey: keyof ModalList): boolean {
+    return this.modals[modalKey]?.classList.contains(CSS_CLASSES.SHOW) || false;
+  }
 
-    this.deleteModal.addEventListener("click", (e) => {
-      if (e.target === this.deleteModal) this.hideDeleteModal();
+  private hideVisible(): void {
+    Object.entries(this.modals).forEach(([key, modal]) => {
+      if (modal.classList.contains(CSS_CLASSES.SHOW)) {
+        this.hide(key as keyof ModalList);
+      }
     });
+  }
+
+  private show(modalKey: keyof ModalList): void {
+    this.modals[modalKey].classList.add(CSS_CLASSES.SHOW);
+  }
+
+  private hide(modalKey: keyof ModalList): void {
+    this.modals[modalKey].classList.remove(CSS_CLASSES.SHOW);
   }
 
   showSaveModal(defaultName: string = "Unnamed Session"): void {
-    this.sessionNameInput.value = defaultName;
-    this.saveModal.classList.add(CSS_CLASSES.SHOW);
-    this.sessionNameInput.focus();
-    this.sessionNameInput.select();
-  }
-
-  hideSaveModal(): void {
-    this.saveModal.classList.remove(CSS_CLASSES.SHOW);
+    this.inputs.sessionName.value = defaultName;
+    this.show("save");
+    this.inputs.sessionName.focus();
+    this.inputs.sessionName.select();
   }
 
   showRenameModal(currentName: string): void {
-    this.newSessionNameInput.value = currentName;
-    this.renameModal.classList.add(CSS_CLASSES.SHOW);
-    this.newSessionNameInput.focus();
-    this.newSessionNameInput.select();
-  }
-
-  hideRenameModal(): void {
-    this.renameModal.classList.remove(CSS_CLASSES.SHOW);
+    this.inputs.newSessionName.value = currentName;
+    this.show("rename");
+    this.inputs.newSessionName.focus();
+    this.inputs.newSessionName.select();
   }
 
   showDeleteModal(sessionName: string): void {
@@ -111,19 +117,29 @@ export class ModalManager {
     if (deleteSessionNameEl) {
       deleteSessionNameEl.textContent = sessionName;
     }
-    this.deleteModal.classList.add(CSS_CLASSES.SHOW);
-    this.deleteModal.focus();
+    this.show("delete");
+    this.modals.delete.focus();
   }
 
-  hideDeleteModal(): void {
-    this.deleteModal.classList.remove(CSS_CLASSES.SHOW);
+  showErrorModal(message: string): void {
+    const errorMessageEl = document.getElementById("errorMessage");
+    if (errorMessageEl) {
+      errorMessageEl.textContent = message;
+    }
+    this.show("error");
+    this.modals.error.focus();
   }
 
   getSaveModalInput(): string {
-    return this.sessionNameInput.value.trim();
+    return this.inputs.sessionName.value.trim();
   }
 
   getRenameModalInput(): string {
-    return this.newSessionNameInput.value.trim();
+    return this.inputs.newSessionName.value.trim();
   }
+
+  hideSaveModal(): void { this.hide("save"); }
+  hideRenameModal(): void { this.hide("rename"); }
+  hideDeleteModal(): void { this.hide("delete"); }
+  hideErrorModal(): void { this.hide("error"); }
 }
