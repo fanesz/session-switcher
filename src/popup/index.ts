@@ -155,7 +155,8 @@ class PopupController {
 
   private showError(message: string): void {
     console.error("Popup error:", message);
-    alert(`Error: ${message}`);
+
+    this.modalManager.showErrorModal(message);
   }
 }
 

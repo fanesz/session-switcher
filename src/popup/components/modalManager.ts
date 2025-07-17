@@ -7,6 +7,7 @@ export class ModalManager {
   private deleteModal: HTMLElement;
   private sessionNameInput: HTMLInputElement;
   private newSessionNameInput: HTMLInputElement;
+  private errorModal: HTMLInputElement;
 
   constructor() {
     this.saveModal = getElementByIdSafe("saveModal");
@@ -14,6 +15,7 @@ export class ModalManager {
     this.deleteModal = getElementByIdSafe("deleteModal");
     this.sessionNameInput = getElementByIdSafe("sessionName");
     this.newSessionNameInput = getElementByIdSafe("newSessionName");
+    this.errorModal = getElementByIdSafe("errorModal");
 
     this.setupEventListeners();
   }
@@ -30,6 +32,10 @@ export class ModalManager {
     // Delete modal events
     getElementByIdSafe("closeDeleteModal").addEventListener("click", () => this.hideDeleteModal());
     getElementByIdSafe("cancelDelete").addEventListener("click", () => this.hideDeleteModal());
+
+    // Error modal events
+    getElementByIdSafe("closeErrorModal").addEventListener("click", () => this.hideErrorModal());
+    getElementByIdSafe("closeErrorModalBtn").addEventListener("click", () => this.hideErrorModal());
 
     // Enter key handlers for input fields
     this.sessionNameInput.addEventListener("keydown", (e) => {
@@ -57,6 +63,15 @@ export class ModalManager {
       }
     });
 
+    // Error modal enter key handler
+    this.errorModal.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && this.errorModal.classList.contains(CSS_CLASSES.SHOW)) {
+        e.preventDefault();
+        const closeErrorBtn = getElementByIdSafe("closeErrorModal");
+        closeErrorBtn.click();
+      }
+    });
+
     // Escape key handlers for all modals
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -66,6 +81,8 @@ export class ModalManager {
           this.hideRenameModal();
         } else if (this.deleteModal.classList.contains(CSS_CLASSES.SHOW)) {
           this.hideDeleteModal();
+        } else if (this.errorModal.classList.contains(CSS_CLASSES.SHOW)) {
+          this.hideErrorModal();
         }
       }
     });
@@ -81,6 +98,10 @@ export class ModalManager {
 
     this.deleteModal.addEventListener("click", (e) => {
       if (e.target === this.deleteModal) this.hideDeleteModal();
+    });
+
+    this.errorModal.addEventListener("click", (e) => {
+      if (e.target === this.errorModal) this.hideErrorModal();
     });
   }
 
@@ -125,5 +146,18 @@ export class ModalManager {
 
   getRenameModalInput(): string {
     return this.newSessionNameInput.value.trim();
+  }
+
+  showErrorModal(message: string): void {
+    const errorMessageEl = document.getElementById("errorMessage");
+    if (errorMessageEl) {
+      errorMessageEl.textContent = message;
+    }
+    this.errorModal.classList.add(CSS_CLASSES.SHOW);
+    this.errorModal.focus();
+  }
+
+  hideErrorModal(): void {
+    this.errorModal.classList.remove(CSS_CLASSES.SHOW);
   }
 }
