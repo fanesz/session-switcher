@@ -78,26 +78,6 @@ export class ModalManager {
     });
   }
 
-  private isVisible(modalKey: keyof ModalList): boolean {
-    return this.modals[modalKey]?.classList.contains(CSS_CLASSES.SHOW) || false;
-  }
-
-  private hideVisible(): void {
-    Object.entries(this.modals).forEach(([key, modal]) => {
-      if (modal.classList.contains(CSS_CLASSES.SHOW)) {
-        this.hide(key as keyof ModalList);
-      }
-    });
-  }
-
-  private show(modalKey: keyof ModalList): void {
-    this.modals[modalKey].classList.add(CSS_CLASSES.SHOW);
-  }
-
-  private hide(modalKey: keyof ModalList): void {
-    this.modals[modalKey].classList.remove(CSS_CLASSES.SHOW);
-  }
-
   showSaveModal(defaultName: string = "Unnamed Session"): void {
     this.inputs.sessionName.value = defaultName;
     this.show("save");
@@ -142,4 +122,30 @@ export class ModalManager {
   hideRenameModal(): void { this.hide("rename"); }
   hideDeleteModal(): void { this.hide("delete"); }
   hideErrorModal(): void { this.hide("error"); }
+
+  hideAllModals(): void {
+    this.hideVisible();
+    this.inputs.sessionName.value = "";
+    this.inputs.newSessionName.value = "";
+  }
+
+  private isVisible(modalKey: keyof ModalList): boolean {
+    return this.modals[modalKey]?.classList.contains(CSS_CLASSES.SHOW) || false;
+  }
+
+  private hideVisible(): void {
+    Object.entries(this.modals).forEach(([key, modal]) => {
+      if (modal.classList.contains(CSS_CLASSES.SHOW)) {
+        this.hide(key as keyof ModalList);
+      }
+    });
+  }
+
+  private show(modalKey: keyof ModalList): void {
+    this.modals[modalKey].classList.add(CSS_CLASSES.SHOW);
+  }
+
+  private hide(modalKey: keyof ModalList): void {
+    this.modals[modalKey].classList.remove(CSS_CLASSES.SHOW);
+  }
 }
