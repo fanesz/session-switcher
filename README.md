@@ -10,7 +10,7 @@
 
 - **Chrome Web Store** → [Session Switcher](https://chromewebstore.google.com/detail/session-switcher/mgekglkbhkpphbnhkmlhlnehaplibleh)
 - **Firefox Add-ons** → [Session Switcher](https://addons.mozilla.org/en-US/firefox/addon/session-switcher)
-- **Edge Add-ons** → _[Not Tested Yet](#)_
+- **Edge Add-ons** → [Session Switcher](https://chromewebstore.google.com/detail/session-switcher/mgekglkbhkpphbnhkmlhlnehaplibleh) (use chrome webstore)
 
 ---
 
@@ -30,6 +30,13 @@
 
 ---
 
+## 🐞 Bug Report / Feature Request
+
+Kindly create an issue [here](https://github.com/fanesz/session-switcher/issues).
+<br>Write a descriptive problem, step-to-reproduce, web browser that you use, and the website url.
+
+---
+
 ## 📦 Manual Installation
 
 ### Chrome / Edge
@@ -44,21 +51,6 @@
 1. Open `about:debugging`.
 2. Click **This Firefox** > **Load Temporary Add-on**.
 3. Select the `manifest.json` file from the `dist` folder.
-
----
-
-## Todo
-
-#### Core
-
-- Modify browser cookies (currently it only modify localStorage and sessionStorage)
-- List blocked web to avoid missclick
-
-#### UX
-
-- Draggable stored session to freely move up/down
-- Shortcut to switch to next/previous stored session
-- Folder feature for stored session
 
 ---
 
