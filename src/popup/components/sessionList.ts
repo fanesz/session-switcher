@@ -1,7 +1,7 @@
-import { SessionData, ActiveSessions } from '../../shared/types';
-import { escapeHtml } from '../utils/dom-utils';
-import { formatDate } from '../../shared/utils/date-utils';
-import { CSS_CLASSES, UI_TEXT } from '../utils/constants';
+import { CSS_CLASSES, UI_TEXT } from "@popup/utils/constants";
+import { escapeHtml } from "@popup/utils/dom";
+import { ActiveSessions, SessionData } from "@shared/types";
+import { formatDate } from "@shared/utils/date";
 
 export class SessionList {
   private container: HTMLElement;
@@ -11,7 +11,7 @@ export class SessionList {
 
   constructor(container: HTMLElement) {
     this.container = container;
-    this.container.addEventListener('click', this.handleClick.bind(this));
+    this.container.addEventListener("click", this.handleClick.bind(this));
   }
 
   setEventHandlers(handlers: {
@@ -25,7 +25,7 @@ export class SessionList {
   }
 
   render(sessions: SessionData[], activeSessions: ActiveSessions, currentDomain: string): void {
-    const domainSessions = sessions.filter(s => s.domain === currentDomain);
+    const domainSessions = sessions.filter((s) => s.domain === currentDomain);
     const activeSessionId = activeSessions[currentDomain];
 
     if (domainSessions.length === 0) {
@@ -41,12 +41,13 @@ export class SessionList {
   }
 
   private renderSessions(sessions: SessionData[], activeSessionId?: string): void {
-    const sessionsHtml = sessions.map(session => {
-      const isActive = session.id === activeSessionId;
-      const lastUsed = formatDate(session.lastUsed);
+    const sessionsHtml = sessions
+      .map((session) => {
+        const isActive = session.id === activeSessionId;
+        const lastUsed = formatDate(session.lastUsed);
 
-      return `
-        <div class="${CSS_CLASSES.SESSION_ITEM} ${isActive ? CSS_CLASSES.ACTIVE : ''}" data-session-id="${session.id}">
+        return `
+        <div class="${CSS_CLASSES.SESSION_ITEM} ${isActive ? CSS_CLASSES.ACTIVE : ""}" data-session-id="${session.id}">
           <div class="session-info">
             <div class="session-name">${escapeHtml(session.name)}</div>
             <div class="session-meta">${UI_TEXT.LAST_USED} ${lastUsed}</div>
@@ -61,7 +62,8 @@ export class SessionList {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join("");
 
     this.container.innerHTML = sessionsHtml;
   }
@@ -76,9 +78,9 @@ export class SessionList {
 
       if (!sessionId) return;
 
-      if (action === 'rename' && this.onRenameClick) {
+      if (action === "rename" && this.onRenameClick) {
         this.onRenameClick(sessionId);
-      } else if (action === 'delete' && this.onDeleteClick) {
+      } else if (action === "delete" && this.onDeleteClick) {
         this.onDeleteClick(sessionId);
       }
       return;

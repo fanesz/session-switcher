@@ -1,23 +1,23 @@
-import { SessionData, StorageData } from '../../shared/types';
-import { ExtensionError } from '../../shared/utils/error-handling';
-import { CookieHandler } from './cookie-handler';
-import { StorageHandler } from './storage-handler';
+import { SessionData, StoredSession } from "@shared/types";
+import { ExtensionError } from "@shared/utils/errorHandling";
+import { CookieHandler } from "./cookie.handler";
+import { StorageHandler } from "./storage.handler";
 
 export class SessionHandler {
   private cookieHandler = new CookieHandler();
   private storageHandler = new StorageHandler();
 
-  async getCurrentSession(domain: string, tabId: number): Promise<Partial<SessionData>> {
+  async getCurrentSession(domain: string, tabId: number): Promise<StoredSession> {
     try {
       const [cookies, storageData] = await Promise.all([
         this.cookieHandler.getCookiesForDomain(domain),
-        this.storageHandler.getStorageData(tabId)
+        this.storageHandler.getStorageData(tabId),
       ]);
 
       return {
         cookies,
         localStorage: storageData.localStorage,
-        sessionStorage: storageData.sessionStorage
+        sessionStorage: storageData.sessionStorage,
       };
     } catch (error) {
       throw new ExtensionError(`Failed to get current session: ${error}`);
@@ -25,15 +25,17 @@ export class SessionHandler {
   }
 
   async switchToSession(sessionData: SessionData, tabId: number): Promise<void> {
+    const { domain, cookies, localStorage, sessionStorage } = sessionData;
+
     try {
-      await this.cookieHandler.clearCookiesForDomain(sessionData.domain);
+      await this.cookieHandler.clearCookiesForDomain(domain);
 
       await Promise.all([
-        this.cookieHandler.restoreCookies(sessionData.cookies),
+        this.cookieHandler.restoreCookies(cookies, domain),
         this.storageHandler.restoreStorageData(tabId, {
-          localStorage: sessionData.localStorage,
-          sessionStorage: sessionData.sessionStorage
-        })
+          localStorage,
+          sessionStorage,
+        }),
       ]);
 
       await chrome.tabs.reload(tabId);
@@ -46,7 +48,7 @@ export class SessionHandler {
     try {
       await Promise.all([
         this.cookieHandler.clearCookiesForDomain(domain),
-        this.storageHandler.clearStorageData(tabId)
+        this.storageHandler.clearStorageData(tabId),
       ]);
 
       await chrome.tabs.reload(tabId);

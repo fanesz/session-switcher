@@ -1,18 +1,18 @@
-import { StorageData } from '../../shared/types';
-import { ExtensionError } from '../../shared/utils/error-handling';
-import { clearStorage, extractStorageData, injectStorageData } from '../services/storageData-service';
+import { clearStorage, extractStorageData, injectStorageData } from "@background/services/storageData.service";
+import { StorageData } from "@shared/types";
+import { ExtensionError } from "@shared/utils/errorHandling";
 
 export class StorageHandler {
   async getStorageData(tabId: number): Promise<StorageData> {
     try {
       const results = await chrome.scripting.executeScript({
         target: { tabId },
-        func: extractStorageData
+        func: extractStorageData,
       });
 
       return results?.[0]?.result || { localStorage: {}, sessionStorage: {} };
     } catch (error) {
-      console.error('Error getting storage data:', error);
+      console.error("Error getting storage data:", error);
       return { localStorage: {}, sessionStorage: {} };
     }
   }
@@ -22,7 +22,7 @@ export class StorageHandler {
       await chrome.scripting.executeScript({
         target: { tabId },
         func: injectStorageData,
-        args: [data.localStorage, data.sessionStorage]
+        args: [data.localStorage, data.sessionStorage],
       });
     } catch (error) {
       throw new ExtensionError(`Failed to restore storage data: ${error}`);
@@ -33,7 +33,7 @@ export class StorageHandler {
     try {
       await chrome.scripting.executeScript({
         target: { tabId },
-        func: clearStorage
+        func: clearStorage,
       });
     } catch (error) {
       throw new ExtensionError(`Failed to clear storage data: ${error}`);

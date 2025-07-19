@@ -1,9 +1,10 @@
-import { getElementByIdSafe } from './utils/dom-utils';
-import { LoadingManager } from './components/loading-manager';
-import { ModalManager } from './components/modal-manager';
-import { SessionList } from './components/session-list';
-import { PopupService } from './services/popup-service';
-import { handleError } from '../shared/utils/error-handling';
+import { getDomainFromUrl } from "@shared/utils/domain";
+import { handleError } from "@shared/utils/errorHandling";
+import { LoadingManager } from "./components/loadingManager";
+import { ModalManager } from "./components/modalManager";
+import { SessionList } from "./components/sessionList";
+import { PopupService } from "./services/popup.service";
+import { getElementByIdSafe } from "./utils/dom";
 
 class PopupController {
   private loadingManager = new LoadingManager();
@@ -17,18 +18,19 @@ class PopupController {
 
   constructor() {
     // Get DOM elements
-    this.currentSiteElement = getElementByIdSafe('currentSite');
-    this.saveBtn = getElementByIdSafe('saveBtn');
-    this.newSessionBtn = getElementByIdSafe('newSessionBtn');
+    this.currentSiteElement = getElementByIdSafe("currentSite");
+    this.saveBtn = getElementByIdSafe("saveBtn");
+    this.newSessionBtn = getElementByIdSafe("newSessionBtn");
 
     // Initialize session list
-    this.sessionList = new SessionList(getElementByIdSafe('sessionsList'));
+    this.sessionList = new SessionList(getElementByIdSafe("sessionsList"));
     this.setupSessionListHandlers();
     this.setupEventListeners();
   }
 
   async initialize(): Promise<void> {
     try {
+      this.modalManager.hideAllModals();
       const state = await this.loadingManager.withLoading(async () => {
         return await this.popupService.initialize();
       });
@@ -36,25 +38,29 @@ class PopupController {
       this.currentSiteElement.textContent = state.currentDomain;
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'PopupController.initialize'));
+      this.showError(handleError(error, "PopupController.initialize"));
     }
   }
 
+  getServiceInstance(): PopupService {
+    return this.popupService;
+  }
+
   private setupEventListeners(): void {
-    this.saveBtn.addEventListener('click', () => this.handleSaveClick());
-    this.newSessionBtn.addEventListener('click', () => this.handleNewSessionClick());
+    this.saveBtn.addEventListener("click", () => this.handleSaveClick());
+    this.newSessionBtn.addEventListener("click", () => this.handleNewSessionClick());
 
     // Modal event listeners
-    getElementByIdSafe('confirmSave').addEventListener('click', () => this.handleConfirmSave());
-    getElementByIdSafe('confirmRename').addEventListener('click', () => this.handleConfirmRename());
-    getElementByIdSafe('confirmDelete').addEventListener('click', () => this.handleConfirmDelete());
+    getElementByIdSafe("confirmSave").addEventListener("click", () => this.handleConfirmSave());
+    getElementByIdSafe("confirmRename").addEventListener("click", () => this.handleConfirmRename());
+    getElementByIdSafe("confirmDelete").addEventListener("click", () => this.handleConfirmDelete());
   }
 
   private setupSessionListHandlers(): void {
     this.sessionList.setEventHandlers({
       onSessionClick: (sessionId) => this.handleSessionSwitch(sessionId),
       onRenameClick: (sessionId) => this.handleRenameClick(sessionId),
-      onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId)
+      onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId),
     });
   }
 
@@ -65,7 +71,7 @@ class PopupController {
   private async handleConfirmSave(): Promise<void> {
     try {
       const name = this.modalManager.getSaveModalInput();
-      
+
       await this.loadingManager.withLoading(async () => {
         await this.popupService.saveCurrentSession(name);
       });
@@ -73,7 +79,7 @@ class PopupController {
       this.modalManager.hideSaveModal();
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'save session'));
+      this.showError(handleError(error, "save session"));
     }
   }
 
@@ -85,7 +91,7 @@ class PopupController {
 
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'create new session'));
+      this.showError(handleError(error, "create new session"));
     }
   }
 
@@ -97,7 +103,7 @@ class PopupController {
 
       this.renderSessionsList();
     } catch (error) {
-      this.showError(handleError(error, 'switch session'));
+      this.showError(handleError(error, "switch session"));
     }
   }
 
@@ -121,7 +127,7 @@ class PopupController {
 
       this.modalManager.hideRenameModal();
     } catch (error) {
-      this.showError(handleError(error, 'rename session'));
+      this.showError(handleError(error, "rename session"));
     }
   }
 
@@ -144,7 +150,7 @@ class PopupController {
 
       this.modalManager.hideDeleteModal();
     } catch (error) {
-      this.showError(handleError(error, 'delete session'));
+      this.showError(handleError(error, "delete session"));
     }
   }
 
@@ -154,15 +160,51 @@ class PopupController {
   }
 
   private showError(message: string): void {
-    console.error('Popup error:', message);
-    alert(`Error: ${message}`);
+    console.error("Popup error:", message);
+
+    this.modalManager.showErrorModal(message);
   }
 }
 
-// Initialize popup when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('Session Switcher popup loaded');
-  
-  const popup = new PopupController();
-  await popup.initialize();
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Session Switcher popup loaded");
+  const controller = new PopupController();
+  await controller.initialize();
+
+  const service = controller.getServiceInstance();
+  const state = service.getState();
+
+  let currentDomain = state.currentDomain;
+
+  const tabActivatedListener = async (activeInfo: { tabId: number }) => {
+    const tab = await chrome.tabs.get(activeInfo.tabId);
+    if (tab.url) {
+      const newDomain = getDomainFromUrl(tab.url);
+      if (newDomain !== currentDomain) {
+        currentDomain = newDomain;
+        await controller.initialize();
+      }
+    }
+  };
+
+  const tabUpdatedListener = async (_: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+    if (changeInfo.status === "complete" && tab.url) {
+      const newDomain = getDomainFromUrl(tab.url);
+      if (newDomain !== currentDomain) {
+        currentDomain = newDomain;
+        await controller.initialize();
+      }
+    }
+  };
+
+  chrome.tabs.onActivated.addListener(tabActivatedListener);
+  chrome.tabs.onUpdated.addListener(tabUpdatedListener);
+
+  const cleanup = () => {
+    chrome.tabs.onActivated.removeListener(tabActivatedListener);
+    chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
+  };
+
+  window.addEventListener("beforeunload", cleanup);
+  window.addEventListener("unload", cleanup);
 });

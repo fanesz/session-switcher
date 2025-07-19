@@ -1,4 +1,4 @@
-import { CSS_CLASSES } from '../utils/constants';
+import { CSS_CLASSES } from "@popup/utils/constants";
 
 export class LoadingManager {
   private isLoading = false;
