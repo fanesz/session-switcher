@@ -1,3 +1,4 @@
+import { getDomainFromUrl } from "@shared/utils/domain";
 import { handleError } from "@shared/utils/errorHandling";
 import { LoadingManager } from "./components/loadingManager";
 import { ModalManager } from "./components/modalManager";
@@ -29,6 +30,7 @@ class PopupController {
 
   async initialize(): Promise<void> {
     try {
+      this.modalManager.hideAllModals();
       const state = await this.loadingManager.withLoading(async () => {
         return await this.popupService.initialize();
       });
@@ -38,6 +40,10 @@ class PopupController {
     } catch (error) {
       this.showError(handleError(error, "PopupController.initialize"));
     }
+  }
+
+  getServiceInstance(): PopupService {
+    return this.popupService;
   }
 
   private setupEventListeners(): void {
@@ -160,10 +166,45 @@ class PopupController {
   }
 }
 
-// Initialize popup when DOM is ready
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Session Switcher popup loaded");
+  const controller = new PopupController();
+  await controller.initialize();
 
-  const popup = new PopupController();
-  await popup.initialize();
+  const service = controller.getServiceInstance();
+  const state = service.getState();
+
+  let currentDomain = state.currentDomain;
+
+  const tabActivatedListener = async (activeInfo: { tabId: number }) => {
+    const tab = await chrome.tabs.get(activeInfo.tabId);
+    if (tab.url) {
+      const newDomain = getDomainFromUrl(tab.url);
+      if (newDomain !== currentDomain) {
+        currentDomain = newDomain;
+        await controller.initialize();
+      }
+    }
+  };
+
+  const tabUpdatedListener = async (_: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+    if (changeInfo.status === "complete" && tab.url) {
+      const newDomain = getDomainFromUrl(tab.url);
+      if (newDomain !== currentDomain) {
+        currentDomain = newDomain;
+        await controller.initialize();
+      }
+    }
+  };
+
+  chrome.tabs.onActivated.addListener(tabActivatedListener);
+  chrome.tabs.onUpdated.addListener(tabUpdatedListener);
+
+  const cleanup = () => {
+    chrome.tabs.onActivated.removeListener(tabActivatedListener);
+    chrome.tabs.onUpdated.removeListener(tabUpdatedListener);
+  };
+
+  window.addEventListener("beforeunload", cleanup);
+  window.addEventListener("unload", cleanup);
 });
