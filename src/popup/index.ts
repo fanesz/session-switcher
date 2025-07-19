@@ -48,20 +48,12 @@ class PopupController {
 
   private setupEventListeners(): void {
     this.saveBtn.addEventListener("click", () => this.handleSaveClick());
-    this.newSessionBtn.addEventListener("click", () =>
-      this.handleNewSessionClick()
-    );
+    this.newSessionBtn.addEventListener("click", () => this.handleNewSessionClick());
 
     // Modal event listeners
-    getElementByIdSafe("confirmSave").addEventListener("click", () =>
-      this.handleConfirmSave()
-    );
-    getElementByIdSafe("confirmRename").addEventListener("click", () =>
-      this.handleConfirmRename()
-    );
-    getElementByIdSafe("confirmDelete").addEventListener("click", () =>
-      this.handleConfirmDelete()
-    );
+    getElementByIdSafe("confirmSave").addEventListener("click", () => this.handleConfirmSave());
+    getElementByIdSafe("confirmRename").addEventListener("click", () => this.handleConfirmRename());
+    getElementByIdSafe("confirmDelete").addEventListener("click", () => this.handleConfirmDelete());
   }
 
   private setupSessionListHandlers(): void {
@@ -164,11 +156,7 @@ class PopupController {
 
   private renderSessionsList(): void {
     const state = this.popupService.getState();
-    this.sessionList.render(
-      state.sessions,
-      state.activeSessions,
-      state.currentDomain
-    );
+    this.sessionList.render(state.sessions, state.activeSessions, state.currentDomain);
   }
 
   private showError(message: string): void {
@@ -199,11 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  const tabUpdatedListener = async (
-    _: number,
-    changeInfo: chrome.tabs.TabChangeInfo,
-    tab: chrome.tabs.Tab
-  ) => {
+  const tabUpdatedListener = async (_: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
     if (changeInfo.status === "complete" && tab.url) {
       const newDomain = getDomainFromUrl(tab.url);
       if (newDomain !== currentDomain) {
@@ -223,8 +207,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.addEventListener("beforeunload", cleanup);
   window.addEventListener("unload", cleanup);
-
-  if (window.chrome && chrome.runtime && chrome.runtime.onSuspend) {
-    chrome.runtime.onSuspend.addListener(cleanup);
-  }
 });
