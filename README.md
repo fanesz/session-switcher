@@ -1,14 +1,13 @@
 # 🔄 Session Switcher
 
-**Session Switcher** is a browser extension that allows users to manage, save, and switch between multiple login sessions with ease. It's especially useful for developers, testers, or anyone who frequently switches between accounts or environments.
+**Session Switcher** is a browser extension that allows users to manage, save, and switch between multiple login sessions with ease and 100% free!.
+It's especially useful for developers, testers, or anyone who frequently switches between accounts or environments.
 
 https://github.com/user-attachments/assets/480baf62-3279-45be-8a30-88f76a90a5f8
 
 ---
 
 ## 🌍 Store Links
-
-> Coming soon to browser extension stores:
 
 - **Chrome Web Store** → [Session Switcher](https://chromewebstore.google.com/detail/session-switcher/mgekglkbhkpphbnhkmlhlnehaplibleh)
 - **Firefox Add-ons** → [Session Switcher](https://addons.mozilla.org/en-US/firefox/addon/session-switcher)
