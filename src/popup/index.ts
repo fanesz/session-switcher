@@ -15,12 +15,20 @@ class PopupController {
   private currentSiteElement: HTMLElement;
   private saveBtn: HTMLButtonElement;
   private newSessionBtn: HTMLButtonElement;
+  private reorderBtn: HTMLButtonElement;
+  private reorderModeButtons: HTMLElement;
+  private saveOrderBtn: HTMLButtonElement;
+  private cancelReorderBtn: HTMLButtonElement;
 
   constructor() {
     // Get DOM elements
     this.currentSiteElement = getElementByIdSafe("currentSite");
     this.saveBtn = getElementByIdSafe("saveBtn");
     this.newSessionBtn = getElementByIdSafe("newSessionBtn");
+    this.reorderBtn = getElementByIdSafe("reorderBtn");
+    this.reorderModeButtons = getElementByIdSafe("reorderModeButtons");
+    this.saveOrderBtn = getElementByIdSafe("saveOrderBtn");
+    this.cancelReorderBtn = getElementByIdSafe("cancelReorderBtn");
 
     // Initialize session list
     this.sessionList = new SessionList(getElementByIdSafe("sessionsList"));
@@ -49,6 +57,9 @@ class PopupController {
   private setupEventListeners(): void {
     this.saveBtn.addEventListener("click", () => this.handleSaveClick());
     this.newSessionBtn.addEventListener("click", () => this.handleNewSessionClick());
+    this.reorderBtn.addEventListener("click", () => this.handleReorderClick());
+    this.saveOrderBtn.addEventListener("click", () => this.handleSaveOrderClick());
+    this.cancelReorderBtn.addEventListener("click", () => this.handleCancelReorderClick());
 
     // Modal event listeners
     getElementByIdSafe("confirmSave").addEventListener("click", () => this.handleConfirmSave());
@@ -61,6 +72,7 @@ class PopupController {
       onSessionClick: (sessionId) => this.handleSessionSwitch(sessionId),
       onRenameClick: (sessionId) => this.handleRenameClick(sessionId),
       onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId),
+      onReorder: (sessionIds: string[]) => this.handleReorder(sessionIds),
     });
   }
 
@@ -151,6 +163,57 @@ class PopupController {
       this.modalManager.hideDeleteModal();
     } catch (error) {
       this.showError(handleError(error, "delete session"));
+    }
+  }
+
+  private handleReorderClick(): void {
+    this.sessionList.enableReorderMode();
+    this.toggleReorderUI(true);
+  }
+
+  private async handleSaveOrderClick(): Promise<void> {
+    try {
+      await this.loadingManager.withLoading(async () => {
+        this.sessionList.saveReorderedSessions();
+      });
+
+      this.sessionList.disableReorderMode();
+      this.toggleReorderUI(false);
+      this.renderSessionsList();
+    } catch (error) {
+      this.showError(handleError(error, "save session order"));
+    }
+  }
+
+  private handleCancelReorderClick(): void {
+    this.sessionList.cancelReorderMode();
+    this.toggleReorderUI(false);
+    this.renderSessionsList();
+  }
+
+  private toggleReorderUI(reorderMode: boolean): void {
+    if (reorderMode) {
+      this.saveBtn.style.display = "none";
+      this.newSessionBtn.style.display = "none";
+      this.reorderBtn.style.display = "none";
+      this.reorderModeButtons.style.display = "flex";
+    } else {
+      this.saveBtn.style.display = "flex";
+      this.newSessionBtn.style.display = "flex";
+      this.reorderBtn.style.display = "flex";
+      this.reorderModeButtons.style.display = "none";
+    }
+  }
+
+  private async handleReorder(sessionIds: string[]): Promise<void> {
+    try {
+      await this.loadingManager.withLoading(async () => {
+        await this.popupService.reorderSessions(sessionIds);
+      });
+
+      this.renderSessionsList();
+    } catch (error) {
+      this.showError(handleError(error, "reorder sessions"));
     }
   }
 

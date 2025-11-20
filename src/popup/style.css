@@ -365,3 +365,26 @@ body {
 .loading::after {
   content: " ⏳";
 }
+
+/* Reorder mode buttons */
+.reorder-mode-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sessions-list.reorder-mode .session-item {
+  cursor: grab;
+}
+
+.sessions-list.reorder-mode .session-item:active {
+  cursor: grabbing;
+}
+
+.reorder-input {
+  display: none;
+}
+
+.reorder-mode-buttons {
+  display: none;
+}

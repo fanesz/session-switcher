@@ -51,6 +51,10 @@ export class PopupService {
 
       const storedSession = response.data ?? storedSessionDefaultValue;
 
+      // Calculate order - new sessions go to the end
+      const domainSessions = this.state.sessions.filter((s) => s.domain === this.state.currentDomain);
+      const maxOrder = domainSessions.length > 0 ? Math.max(...domainSessions.map((s) => s.order)) : -1;
+
       const newSession: SessionData = {
         ...storedSession,
         id: generateId(),
@@ -58,6 +62,7 @@ export class PopupService {
         domain: this.state.currentDomain,
         createdAt: Date.now(),
         lastUsed: Date.now(),
+        order: maxOrder + 1,
       };
 
       this.state.sessions.push(newSession);
@@ -140,6 +145,30 @@ export class PopupService {
       await this.saveStorageData();
     } catch (error) {
       throw new ExtensionError(handleError(error, "PopupService.deleteSession"));
+    }
+  }
+
+  async reorderSessions(sessionIds: string[]): Promise<void> {
+    try {
+      let result: SessionData[] = [];
+
+      sessionIds.forEach((id, index) => {
+        const session = this.state.sessions
+          .filter(x => x.domain === this.state.currentDomain)
+          .find((s) => s.id === id);
+          
+        if (!session) {
+          throw new Error("Session not found");
+        }
+
+        session.order = index;
+
+        result.push(session);
+      });
+
+      await this.saveStorageData();
+    } catch (error) {
+      throw new ExtensionError(handleError(error, "PopupService.reorderSessions"));
     }
   }
 
