@@ -1,7 +1,6 @@
 import { build } from "esbuild";
 
 await build({
-  entryPoints: ["src/background/index.ts"],
   bundle: true,
   outfile: "dist/background/index.js",
   platform: "browser",
@@ -13,7 +12,7 @@ await build({
 });
 
 await build({
-  entryPoints: ["src/popup/index.ts"],
+  entryPoints: ["src/popup/index.tsx"],
   bundle: true,
   outfile: "dist/popup/index.js",
   platform: "browser",
@@ -21,4 +20,9 @@ await build({
   format: "iife",
   minify: false,
   sourcemap: false,
+  jsx: "automatic",
+  loader: {
+    ".tsx": "tsx",
+    ".ts": "ts",
+  },
 });

@@ -1,120 +1,16 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Session Switcher</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <header class="header">
-        <h1 class="title">
-          Session Switcher <a class="byline" href="https://github.com/fanesz/session-switcher">by Fanesz</a>
-          <span class="info-icon">
-            i
-            <div class="info-tooltip">
-              <h4>How to use Session Switcher:</h4>
-              <p><strong>1.</strong> Login to your first account</p>
-              <p><strong>2.</strong> Press "Save Current Session"</p>
-              <p><strong>3.</strong> Press "New Session"</p>
-              <p><strong>4.</strong> Login to your other account</p>
-              <p><strong>5.</strong> Press "Save Current Session"</p>
-              <p><strong>6.</strong> Now you can easily switch between saved sessions!</p>
-            </div>
-          </span>
-        </h1>
-        <div class="current-site" id="currentSite">Loading...</div>
-      </header>
 
-      <main class="content">
-        <div class="actions-top">
-          <button id="saveBtn" class="btn btn-primary">
-            <span class="btn-icon">💾</span>
-            Save Current Session
-          </button>
-          <button id="newSessionBtn" class="btn btn-secondary">
-            <span class="btn-icon">🆕</span>
-            New Session
-          </button>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Switcher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-        <div class="sessions-section">
-          <h3 class="section-title">Saved Sessions</h3>
-          <div id="sessionsList" class="sessions-list">
-            <div class="no-sessions">No sessions saved for this site</div>
-          </div>
-        </div>
-      </main>
-    </div>
+<body>
+  <div id="root"></div>
+  <script src="index.js"></script>
+</body>
 
-    <!-- Modals -->
-    <div id="saveModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Save Session</h3>
-          <button id="closeSaveModal" class="close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <label for="sessionName">Session Name:</label>
-          <input type="text" id="sessionName" placeholder="Enter session name" value="Unnamed Session" />
-        </div>
-        <div class="modal-footer">
-          <button id="cancelSave" class="btn btn-secondary">Cancel</button>
-          <button id="confirmSave" class="btn btn-primary">Save</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="renameModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Rename Session</h3>
-          <button id="closeRenameModal" class="close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <label for="newSessionName">New Name:</label>
-          <input type="text" id="newSessionName" placeholder="Enter new name" />
-        </div>
-        <div class="modal-footer">
-          <button id="cancelRename" class="btn btn-secondary">Cancel</button>
-          <button id="confirmRename" class="btn btn-primary">Rename</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="deleteModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Delete Session</h3>
-          <button id="closeDeleteModal" class="close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to delete the session "<strong id="deleteSessionName"></strong>"?</p>
-          <p class="warning-text">This action cannot be undone.</p>
-        </div>
-        <div class="modal-footer">
-          <button id="cancelDelete" class="btn btn-secondary">Cancel</button>
-          <button id="confirmDelete" class="btn btn-danger">Delete</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="errorModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Error</h3>
-          <button id="closeErrorModal" class="close-btn">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p id="errorMessage">An unexpected error occurred.</p>
-        </div>
-        <div class="modal-footer">
-          <button id="closeErrorModalBtn" class="btn btn-primary">Close</button>
-        </div>
-      </div>
-    </div>
-
-    <script src="index.js"></script>
-  </body>
 </html>

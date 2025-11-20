@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "types": ["chrome"],
     "paths": {
       "@background/*": ["./src/background/*"],

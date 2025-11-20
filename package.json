@@ -7,6 +7,8 @@
     "@types/bun": "latest",
     "@types/chrome": "^0.0.323",
     "@types/firefox-webext-browser": "^120.0.4",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
     "@types/webextension-polyfill": "^0.12.3",
     "@typescript-eslint/eslint-plugin": "^8.37.0",
     "@typescript-eslint/parser": "^8.37.0",
@@ -40,5 +42,9 @@
     "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
     "clean": "bun build/clean-dist.ts"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
 }

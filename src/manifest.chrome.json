@@ -7,10 +7,6 @@
   "permissions": ["storage", "tabs", "cookies", "activeTab", "scripting"],
   "host_permissions": ["<all_urls>"],
 
-  "background": {
-    "service_worker": "background/index.js"
-  },
-
   "action": {
     "default_popup": "popup/index.html",
     "default_title": "Session Switcher",
