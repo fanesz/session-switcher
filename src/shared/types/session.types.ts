@@ -4,6 +4,7 @@ export interface SessionData extends StoredSession {
   domain: string;
   createdAt: number;
   lastUsed: number;
+  order: number;
 }
 
 export interface StoredSession {

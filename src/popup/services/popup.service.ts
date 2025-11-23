@@ -51,6 +51,9 @@ export class PopupService {
 
       const storedSession = response.data ?? storedSessionDefaultValue;
 
+      const domainSessions = this.state.sessions.filter((s) => s.domain === this.state.currentDomain);
+      const maxOrder = domainSessions.length > 0 ? Math.max(...domainSessions.map((s) => s.order ?? 0)) : -1;
+
       const newSession: SessionData = {
         ...storedSession,
         id: generateId(),
@@ -58,6 +61,7 @@ export class PopupService {
         domain: this.state.currentDomain,
         createdAt: Date.now(),
         lastUsed: Date.now(),
+        order: maxOrder + 1,
       };
 
       this.state.sessions.push(newSession);
@@ -143,6 +147,23 @@ export class PopupService {
     }
   }
 
+  async reorderSessions(sessionIds: string[]): Promise<void> {
+    try {
+      const domainSessions = this.state.sessions.filter((s) => s.domain === this.state.currentDomain);
+
+      sessionIds.forEach((id, index) => {
+        const session = domainSessions.find((s) => s.id === id);
+        if (session) {
+          session.order = index;
+        }
+      });
+
+      await this.saveStorageData();
+    } catch (error) {
+      throw new ExtensionError(handleError(error, "PopupService.reorderSessions"));
+    }
+  }
+
   getSession(sessionId: string): SessionData | undefined {
     return this.state.sessions.find((s) => s.id === sessionId);
   }
@@ -164,11 +185,32 @@ export class PopupService {
 
       this.state.sessions = result[STORAGE_KEYS.SESSIONS] || [];
       this.state.activeSessions = result[STORAGE_KEYS.ACTIVE_SESSIONS] || {};
+
+      this.migrateLegacySessions();
     } catch (error) {
       console.error("Error loading storage data:", error);
       this.state.sessions = [];
       this.state.activeSessions = {};
     }
+  }
+
+  private migrateLegacySessions(): void {
+    const sessionsByDomain = new Map<string, SessionData[]>();
+
+    this.state.sessions.forEach((session) => {
+      if (!sessionsByDomain.has(session.domain)) {
+        sessionsByDomain.set(session.domain, []);
+      }
+      sessionsByDomain.get(session.domain)!.push(session);
+    });
+
+    sessionsByDomain.forEach((sessions) => {
+      sessions.forEach((session, index) => {
+        if (session.order === undefined) {
+          session.order = index;
+        }
+      });
+    });
   }
 
   private async saveStorageData(): Promise<void> {

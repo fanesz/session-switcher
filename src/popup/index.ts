@@ -61,6 +61,7 @@ class PopupController {
       onSessionClick: (sessionId) => this.handleSessionSwitch(sessionId),
       onRenameClick: (sessionId) => this.handleRenameClick(sessionId),
       onDeleteClick: (sessionId) => this.handleDeleteClick(sessionId),
+      onReorder: (sessionIds) => this.handleReorder(sessionIds),
     });
   }
 
@@ -151,6 +152,14 @@ class PopupController {
       this.modalManager.hideDeleteModal();
     } catch (error) {
       this.showError(handleError(error, "delete session"));
+    }
+  }
+
+  private async handleReorder(sessionIds: string[]): Promise<void> {
+    try {
+      await this.popupService.reorderSessions(sessionIds);
+    } catch (error) {
+      this.showError(handleError(error, "reorder sessions"));
     }
   }
 

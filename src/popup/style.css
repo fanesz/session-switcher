@@ -204,7 +204,7 @@ body {
   margin-bottom: 8px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -356,7 +356,30 @@ body {
   justify-content: flex-end;
 }
 
-/* Loading state */
+.drag-handle {
+  cursor: grab;
+  color: #6c757d;
+  font-size: 16px;
+  padding: 4px;
+  user-select: none;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.session-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.session-item.drag-over {
+  border-color: #667eea;
+  border-style: dashed;
+  background: rgba(102, 126, 234, 0.05);
+}
+
 .loading {
   opacity: 0.6;
   pointer-events: none;
