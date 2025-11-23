@@ -151,6 +151,17 @@ export class PopupService {
     try {
       const domainSessions = this.state.sessions.filter((s) => s.domain === this.state.currentDomain);
 
+      if (sessionIds.length !== domainSessions.length) {
+        throw new ExtensionError("Session count mismatch during reorder operation");
+      }
+
+      const sessionIdsSet = new Set(sessionIds);
+      const allSessionsPresent = domainSessions.every((session) => sessionIdsSet.has(session.id));
+
+      if (!allSessionsPresent) {
+        throw new ExtensionError("Invalid session IDs provided for reorder operation");
+      }
+
       sessionIds.forEach((id, index) => {
         const session = domainSessions.find((s) => s.id === id);
         if (session) {
@@ -186,7 +197,10 @@ export class PopupService {
       this.state.sessions = result[STORAGE_KEYS.SESSIONS] || [];
       this.state.activeSessions = result[STORAGE_KEYS.ACTIVE_SESSIONS] || {};
 
-      this.migrateLegacySessions();
+      const migrationNeeded = await this.migrateLegacySessions();
+      if (migrationNeeded) {
+        await this.saveStorageData();
+      }
     } catch (error) {
       console.error("Error loading storage data:", error);
       this.state.sessions = [];
@@ -194,7 +208,8 @@ export class PopupService {
     }
   }
 
-  private migrateLegacySessions(): void {
+  private migrateLegacySessions(): boolean {
+    let migrationPerformed = false;
     const sessionsByDomain = new Map<string, SessionData[]>();
 
     this.state.sessions.forEach((session) => {
@@ -208,9 +223,12 @@ export class PopupService {
       sessions.forEach((session, index) => {
         if (session.order === undefined) {
           session.order = index;
+          migrationPerformed = true;
         }
       });
     });
+
+    return migrationPerformed;
   }
 
   private async saveStorageData(): Promise<void> {
