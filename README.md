@@ -68,6 +68,14 @@ bun run dev:<firefox or chrome>
 bun run build:<firefox or chrome>
 ```
 
+## Testing
+
+This project uses Jest for testing. To run tests, use the following command:
+
+```bash
+bun run test
+```
+
 ---
 
 ## 🙌 Contributing

@@ -4,6 +4,7 @@
   "author": "Fanesz",
   "main": "dist/background.js",
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
     "@types/bun": "latest",
     "@types/chrome": "^0.0.323",
     "@types/firefox-webext-browser": "^120.0.4",
@@ -12,9 +13,12 @@
     "@typescript-eslint/parser": "^8.37.0",
     "esbuild": "^0.25.4",
     "eslint": "^8.57.0",
+    "eslint-import-resolver-jest": "^3.0.2",
     "eslint-plugin-import": "^2.32.0",
+    "jest": "^30.2.0",
     "prettier": "^3.6.2",
     "prettier-plugin-multiline-arrays": "^4.0.3",
+    "ts-jest": "^29.4.5",
     "ts-loader": "^9.5.0",
     "typescript": "^5.8.3",
     "web-ext": "^8.7.0",
@@ -38,7 +42,8 @@
     "build:chrome": "bun build/build.ts chrome",
     "dev:firefox": "bun run build:firefox && web-ext run --source-dir=dist",
     "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
-    "clean": "bun build/clean-dist.ts"
+    "clean": "bun build/clean-dist.ts",
+    "test": "jest"
   },
   "type": "module"
 }
