@@ -3,9 +3,9 @@ export type ModalList = {
   rename: HTMLElement;
   delete: HTMLElement;
   error: HTMLElement;
-}
+};
 
 export type ModalInputs = {
   sessionName: HTMLInputElement;
   newSessionName: HTMLInputElement;
-}
+};

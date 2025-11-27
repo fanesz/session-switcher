@@ -11,12 +11,12 @@ export class ModalManager {
       save: getElementByIdSafe("saveModal"),
       rename: getElementByIdSafe("renameModal"),
       delete: getElementByIdSafe("deleteModal"),
-      error: getElementByIdSafe("errorModal")
+      error: getElementByIdSafe("errorModal"),
     };
 
     this.inputs = {
       sessionName: getElementByIdSafe("sessionName"),
-      newSessionName: getElementByIdSafe("newSessionName")
+      newSessionName: getElementByIdSafe("newSessionName"),
     };
 
     this.setupEventListeners();
@@ -31,7 +31,7 @@ export class ModalManager {
       { id: "closeDeleteModal", modal: "delete" },
       { id: "cancelDelete", modal: "delete" },
       { id: "closeErrorModal", modal: "error" },
-      { id: "closeErrorModalBtn", modal: "error" }
+      { id: "closeErrorModalBtn", modal: "error" },
     ];
 
     closeButtons.forEach(({ id, modal }) => {
@@ -118,10 +118,18 @@ export class ModalManager {
     return this.inputs.newSessionName.value.trim();
   }
 
-  hideSaveModal(): void { this.hide("save"); }
-  hideRenameModal(): void { this.hide("rename"); }
-  hideDeleteModal(): void { this.hide("delete"); }
-  hideErrorModal(): void { this.hide("error"); }
+  hideSaveModal(): void {
+    this.hide("save");
+  }
+  hideRenameModal(): void {
+    this.hide("rename");
+  }
+  hideDeleteModal(): void {
+    this.hide("delete");
+  }
+  hideErrorModal(): void {
+    this.hide("error");
+  }
 
   hideAllModals(): void {
     this.hideVisible();
