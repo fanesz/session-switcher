@@ -15,7 +15,9 @@
     "eslint": "^8.57.0",
     "eslint-import-resolver-jest": "^3.0.2",
     "eslint-plugin-import": "^2.32.0",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
     "prettier-plugin-multiline-arrays": "^4.0.3",
     "ts-jest": "^29.4.5",
@@ -43,7 +45,17 @@
     "dev:firefox": "bun run build:firefox && web-ext run --source-dir=dist",
     "dev:chrome": "bun run build:chrome && web-ext run --source-dir=dist",
     "clean": "bun build/clean-dist.ts",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
   },
-  "type": "module"
+  "type": "module",
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html}": [
+      "prettier --write"
+    ]
+  }
 }

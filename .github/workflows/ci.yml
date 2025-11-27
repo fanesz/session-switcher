@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run linter
+        run: bun run lint:check
+
+      - name: Check formatting
+        run: bun run format:check
+
+      - name: Run tests
+        run: bun run test
+
+      - name: Build Firefox
+        run: bun run build:firefox
+
+      - name: Build Chrome
+        run: bun run build:chrome
